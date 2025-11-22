@@ -1,0 +1,52 @@
+{
+  "auth": {
+    "title": "مرحبًا بعودتك",
+    "description": "سجل الدخول باستخدام حساب Apple أو Google",
+    "email_label": "البريد الإلكتروني",
+    "email_placeholder": "you@example.com",
+    "password_label": "كلمة المرور",
+    "password_placeholder": "أدخل كلمة المرور",
+    "forgot_password": "هل نسيت كلمة المرور؟",
+    "no_account": "ليس لديك حساب؟",
+    "register": "سجل",
+    "button": {
+      "login": "تسجيل الدخول",
+      "login_apple": "تسجيل الدخول بواسطة Apple",
+      "login_google": "تسجيل الدخول بواسطة Google"
+    },
+    "errors": {
+      "required_email": "البريد الإلكتروني مطلوب.",
+      "invalid_email": "الرجاء إدخال بريد إلكتروني صالح.",
+      "required_password": "كلمة المرور مطلوبة.",
+      "min_password": "يجب أن تتكون كلمة المرور من {min} أحرف على الأقل.",
+      "server_error": "حدث خطأ. الرجاء المحاولة مرة أخرى.",
+      "invalid_credentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+      "missing_fields": "جميع الحقول مطلوبة.",
+      "password_mismatch": "كلمات المرور غير متطابقة.",
+      "weak_password": "يجب أن تحتوي كلمة المرور على حرف كبير، حرف صغير، رقم وحرف خاص."
+    }
+  },
+  "nav": {
+    "general": "عام",
+    "pages": "الصفحات",
+    "home": "الرئيسية",
+    "email": "البريد",
+    "tasks": "المهام",
+    "authentication": "المصادقة",
+    "login": "تسجيل الدخول",
+    "login_basic": "تسجيل أساسي",
+    "register": "التسجيل",
+    "forgot_password": "نسيت كلمة المرور"
+  },
+  "authors": {
+    "title": "المؤلفون",
+    "description": "تعرف على الأشخاص الذين بنوا هذا المشروع",
+    "role": "الدور",
+    "contact": "التواصل",
+    "no_authors": "لا يوجد مؤلفون"
+  },
+  "common": {
+    "back_to_home": "العودة للرئيسية",
+    "go_back": "ارجع"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "auth": {
+    "title": "Bon retour",
+    "description": "Connectez-vous avec votre compte Apple ou Google",
+    "email_label": "Email",
+    "email_placeholder": "vous@exemple.com",
+    "password_label": "Mot de passe",
+    "password_placeholder": "Entrez votre mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "no_account": "Pas encore de compte ?",
+    "register": "Inscrivez-vous",
+    "button": {
+      "login": "Se connecter",
+      "login_apple": "Connexion avec Apple",
+      "login_google": "Connexion avec Google"
+    },
+    "errors": {
+      "required_email": "L'email est requis.",
+      "invalid_email": "Veuillez entrer un email valide.",
+      "required_password": "Le mot de passe est requis.",
+      "min_password": "Le mot de passe doit contenir au moins {min} caractères.",
+      "server_error": "Une erreur est survenue. Veuillez réessayer.",
+      "invalid_credentials": "Email ou mot de passe invalide.",
+      "missing_fields": "Tous les champs sont requis.",
+      "password_mismatch": "Les mots de passe ne correspondent pas.",
+      "weak_password": "Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial."
+    }
+  },
+  "nav": {
+    "general": "Général",
+    "pages": "Pages",
+    "home": "Accueil",
+    "email": "Email",
+    "tasks": "Tâches",
+    "authentication": "Authentification",
+    "login": "Connexion",
+    "login_basic": "Connexion basique",
+    "register": "Inscription",
+    "forgot_password": "Mot de passe oublié"
+  },
+  "authors": {
+    "title": "Auteurs",
+    "description": "Rencontrez les personnes qui ont construit ce projet",
+    "role": "Rôle",
+    "contact": "Contact",
+    "no_authors": "Aucun auteur trouvé"
+  },
+  "common": {
+    "back_to_home": "Retour à l'accueil",
+    "go_back": "Retour"
+  }
+}

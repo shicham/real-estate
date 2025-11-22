@@ -1,0 +1,52 @@
+{
+  "auth": {
+    "title": "Welcome back",
+    "description": "Login with your Apple or Google account",
+    "email_label": "Email",
+    "email_placeholder": "you@example.com",
+    "password_label": "Password",
+    "password_placeholder": "Enter your password",
+    "forgot_password": "Forgot password?",
+    "no_account": "Don't have an account?",
+    "register": "Register",
+    "button": {
+      "login": "Sign in",
+      "login_apple": "Login with Apple",
+      "login_google": "Login with Google"
+    },
+    "errors": {
+      "required_email": "Email is required.",
+      "invalid_email": "Please enter a valid email.",
+      "required_password": "Password is required.",
+      "min_password": "Password must be at least {min} characters.",
+      "server_error": "An error occurred. Please try again.",
+      "invalid_credentials": "Invalid email or password.",
+      "missing_fields": "All fields are required.",
+      "password_mismatch": "Passwords do not match.",
+      "weak_password": "Password must include uppercase, lowercase, a number and a special character."
+    }
+  },
+  "nav": {
+    "general": "General",
+    "pages": "Pages",
+    "home": "Home",
+    "email": "Email",
+    "tasks": "Tasks",
+    "authentication": "Authentication",
+    "login": "Login",
+    "login_basic": "Login Basic",
+    "register": "Register",
+    "forgot_password": "Forgot password"
+  },
+  "authors": {
+    "title": "Authors",
+    "description": "Meet the people who built this project",
+    "role": "Role",
+    "contact": "Contact",
+    "no_authors": "No authors found"
+  },
+  "common": {
+    "back_to_home": "Back to Home",
+    "go_back": "Go Back"
+  }
+}
