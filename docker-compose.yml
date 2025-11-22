@@ -1,0 +1,109 @@
+version: '3.8'
+
+services:
+  # MongoDB (optional - if not using Atlas)
+  mongodb:
+    image: mongo:6.0
+    container_name: realestate-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: realestate_auth
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - realestate-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: realestate-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - realestate-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Authentication API
+  api-auth:
+    build:
+      context: ./apis/api-auth
+      dockerfile: Dockerfile
+    container_name: realestate-api-auth
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      MONGODB_URI: mongodb://admin:password@mongodb:27017/realestate_auth?authSource=admin
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    env_file:
+      - ./apis/api-auth/.env
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - realestate-network
+    volumes:
+      - ./apis/api-auth/logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Admin Frontend (development mode with hot reload)
+  admin-frontend:
+    build:
+      context: ./front/admin
+      dockerfile: Dockerfile.dev
+      target: development
+    container_name: realestate-admin-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      NUXT_PUBLIC_API_BASE_URL: http://api-auth:3001
+    env_file:
+      - ./front/admin/.env
+    depends_on:
+      - api-auth
+    networks:
+      - realestate-network
+    volumes:
+      - ./front/admin:/app
+      - /app/node_modules
+      - /app/.nuxt
+    command: pnpm run dev
+
+networks:
+  realestate-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
+  redis_data:
+    driver: local
