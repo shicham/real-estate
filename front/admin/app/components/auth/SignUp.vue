@@ -8,7 +8,8 @@ const authStore = useAuthStore()
 const router = useRouter()
 
 // Form state
-const name = ref('')
+const firstName = ref('')
+const lastName = ref('')
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
@@ -16,7 +17,8 @@ const errorMessage = ref('')
 const successMessage = ref('')
 
 // Field validation errors
-const nameError = ref('')
+const firstNameError = ref('')
+const lastNameError = ref('')
 const emailError = ref('')
 const passwordError = ref('')
 const confirmPasswordError = ref('')
@@ -63,16 +65,29 @@ const passwordStrengthColor = computed(() => {
   return 'bg-green-500'
 })
 
-function validateName() {
-  if (!name.value) {
-    nameError.value = 'Le nom est requis.'
+function validateFirstName() {
+  if (!firstName.value) {
+    firstNameError.value = 'Le prénom est requis.'
     return false
   }
-  if (name.value.length < 2) {
-    nameError.value = 'Le nom doit contenir au moins 2 caractères.'
+  if (firstName.value.length < 2) {
+    firstNameError.value = 'Le prénom doit contenir au moins 2 caractères.'
     return false
   }
-  nameError.value = ''
+  firstNameError.value = ''
+  return true
+}
+
+function validateLastName() {
+  if (!lastName.value) {
+    lastNameError.value = 'Le nom est requis.'
+    return false
+  }
+  if (lastName.value.length < 2) {
+    lastNameError.value = 'Le nom doit contenir au moins 2 caractères.'
+    return false
+  }
+  lastNameError.value = ''
   return true
 }
 
@@ -127,23 +142,28 @@ async function onSubmit(event: Event) {
   successMessage.value = ''
 
   // Reset all errors
-  nameError.value = ''
+  firstNameError.value = ''
+  lastNameError.value = ''
   emailError.value = ''
   passwordError.value = ''
   confirmPasswordError.value = ''
 
   // Validate all fields
-  const isNameValid = validateName()
+  const isFirstNameValid = validateFirstName()
+  const isLastNameValid = validateLastName()
   const isEmailValid = validateEmail()
   const isPasswordValid = validatePassword()
   const isConfirmPasswordValid = validateConfirmPassword()
 
-  if (!isNameValid || !isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
+  if (!isFirstNameValid || !isLastNameValid || !isEmailValid || !isPasswordValid || !isConfirmPasswordValid) {
     return
   }
 
+  // Combine firstName and lastName for the register call
+  const fullName = `${firstName.value} ${lastName.value}`
+
   const result = await authStore.register(
-    name.value,
+    fullName,
     email.value,
     password.value,
     confirmPassword.value,
@@ -167,22 +187,41 @@ async function onSubmit(event: Event) {
     <form @submit="onSubmit">
       <div class="grid gap-4">
         <div class="grid gap-2">
-          <Label for="name">
-            Nom complet
+          <Label for="firstName">
+            Prénom
           </Label>
           <Input
-            id="name"
-            v-model="name"
+            id="firstName"
+            v-model="firstName"
+            placeholder="Entrez votre prénom"
+            type="text"
+            auto-capitalize="words"
+            auto-complete="given-name"
+            auto-correct="off"
+            :disabled="authStore.isLoading"
+            @blur="validateFirstName"
+          />
+          <p v-if="firstNameError" class="text-sm text-red-500">
+            {{ firstNameError }}
+          </p>
+        </div>
+        <div class="grid gap-2">
+          <Label for="lastName">
+            Nom
+          </Label>
+          <Input
+            id="lastName"
+            v-model="lastName"
             placeholder="Entrez votre nom"
             type="text"
             auto-capitalize="words"
-            auto-complete="name"
+            auto-complete="family-name"
             auto-correct="off"
             :disabled="authStore.isLoading"
-            @blur="validateName"
+            @blur="validateLastName"
           />
-          <p v-if="nameError" class="text-sm text-red-500">
-            {{ nameError }}
+          <p v-if="lastNameError" class="text-sm text-red-500">
+            {{ lastNameError }}
           </p>
         </div>
         <div class="grid gap-2">
