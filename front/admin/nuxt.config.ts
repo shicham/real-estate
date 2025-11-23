@@ -3,7 +3,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
   devtools: { enabled: true },
 
-  css: ['~/assets/css/tailwind.css'],
+  css: ['~/assets/css/fonts.css', '~/assets/css/tailwind.css'],
   vite: {
     plugins: [
       tailwindcss(),
@@ -93,6 +93,7 @@ export default defineNuxtConfig({
     public: {
       apiBaseUrl: 'http://localhost:3001',
       apiLoginEndpoint: '/api/v1/auth/login',
+      apiRegisterEndpoint: '/api/v1/auth/register',
     },
   },
 

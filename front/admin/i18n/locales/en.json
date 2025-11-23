@@ -6,6 +6,10 @@
     "email_placeholder": "you(at)example.com",
     "password_label": "Password",
     "password_placeholder": "Enter your password",
+    "firstName_label": "First name",
+    "firstName_placeholder": "Entre your first name",
+    "lastName_label": "Last name",
+    "lastName_placeholder": "Entre your last name",
     "forgot_password": "Forgot password?",
     "no_account": "Don't have an account?",
     "register": "Register",
@@ -15,6 +19,8 @@
       "login_google": "Login with Google"
     },
     "errors": {
+      "required_firstName": "First name is required.",
+      "required_lastName": "Last name is required.",
       "required_email": "Email is required.",
       "invalid_email": "Please enter a valid email.",
       "required_password": "Password is required.",

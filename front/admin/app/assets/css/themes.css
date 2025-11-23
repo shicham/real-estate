@@ -1,3 +1,5 @@
+
+
 .theme-mono {
   --font-sans: var(--font-mono);
   --primary: var(--color-stone-600);
@@ -76,7 +78,7 @@
     --text-7xl: 1.7rem;
     --text-8xl: 1.8rem;
     --text-base: 0.85rem;
-    --text-sm: 0.8125rem;
+    --text-sm: 13px;
     --spacing: 0.2rem;
   }
 

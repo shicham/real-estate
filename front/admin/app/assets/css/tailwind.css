@@ -115,6 +115,9 @@
   --vis-tooltip-shadow-color: none !important;
   --vis-tooltip-backdrop-filter: none !important;
   --vis-tooltip-padding: none !important;
+
+  --text-sm--line-height: 1.5;
+  --text-sm: 13px;
 }
 
 .dark {
@@ -166,6 +169,7 @@
   }
   body {
     font-family: var(--font-sans);
+    font-size: 13px;
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
   }

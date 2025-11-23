@@ -95,14 +95,13 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async register(name: string, email: string, password: string, confirmPassword: string) {
+    async register(firstName: string, lastName: string, email: string, password: string, confirmPassword: string) {
       this.isLoading = true
       const config = useRuntimeConfig()
-      const API_URL = `${config.public.apiBaseUrl}/api/v1/auth/register`
-
+      const API_URL = `${config.public.apiBaseUrl}${config.public.apiRegisterEndpoint}`
       try {
         // Validation
-        if (!name || !email || !password || !confirmPassword) {
+        if (!firstName || !lastName || !email || !password || !confirmPassword) {
           throw new Error('Tous les champs sont requis.')
         }
 
@@ -122,7 +121,7 @@ export const useAuthStore = defineStore('auth', {
 
         const { data, error } = await useFetch(API_URL, {
           method: 'POST',
-          body: { name, email, password },
+          body: { firstName, lastName, email, password },
           headers: { 'Content-Type': 'application/json' },
         })
 

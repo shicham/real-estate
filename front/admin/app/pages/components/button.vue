@@ -28,11 +28,11 @@
     <div class="grid gap-4 md:grid-cols-3">
       <Card class="w-full">
         <CardHeader>
-          <CardTitle>Default</CardTitle>
+          <CardTitle>Primary</CardTitle>
         </CardHeader>
         <CardContent>
           <div class="h-100px w-full flex items-center justify-center gap-4 overflow-hidden sm:h-200px">
-            <Button>Default</Button>
+            <Button>Primary</Button>
           </div>
         </CardContent>
       </Card>
