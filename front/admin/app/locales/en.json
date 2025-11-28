@@ -27,7 +27,9 @@
     }
   },
   "nav": {
+    "dashboard": "Dashboard",
     "general": "General",
+    "administration": "Administration",
     "pages": "Pages",
     "home": "Home",
     "email": "Email",
