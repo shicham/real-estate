@@ -2,9 +2,13 @@
 import NumberFlow from '@number-flow/vue'
 import { TrendingDown, TrendingUp, TrendingUpIcon } from 'lucide-vue-next'
 
+import { useI18n } from 'vue-i18n'
+
 definePageMeta({
   layout: 'default',
 })
+
+const { t } = useI18n()
 
 const dataCard = ref({
   totalRevenue: 0,
@@ -39,7 +43,7 @@ watch(isDesktop, () => {
   <div class="w-full flex flex-col gap-4">
     <div class="flex flex-wrap items-center justify-between gap-2">
       <h2 class="text-2xl font-bold tracking-tight">
-        Dashboards
+        {{ t('nav.dashboard') }}
       </h2>
       <div class="flex items-center space-x-2">
         <BaseDateRangePicker />
