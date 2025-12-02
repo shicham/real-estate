@@ -80,7 +80,7 @@ export const useAuthStore = defineStore('auth', {
         this.refreshToken = response.data.refreshToken
         this.isAuthenticated = true
 
-        // Store in localStorage as backup
+        // Store in Cookie 
         useCookie('accessToken').value = response.data.accessToken
         useCookie('refreshToken').value = response.data.refreshToken
         useCookie('user').value = JSON.stringify(response.data.user)
@@ -150,11 +150,10 @@ export const useAuthStore = defineStore('auth', {
           this.refreshToken = response.data.refreshToken
           this.isAuthenticated = true
 
-          if (import.meta.client) {
-            localStorage.setItem('accessToken', response.data.accessToken)
-            localStorage.setItem('refreshToken', response.data.refreshToken)
-            localStorage.setItem('user', JSON.stringify(response.data.user))
-          }
+          // Store in Cookie 
+          useCookie('accessToken').value = response.data.accessToken
+          useCookie('refreshToken').value = response.data.refreshToken
+          useCookie('user').value = JSON.stringify(response.data.user)
         }
 
         return { success: true, message: response.message }

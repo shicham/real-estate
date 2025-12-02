@@ -94,6 +94,9 @@ export default defineNuxtConfig({
       apiBaseUrl: 'http://localhost:3001',
       apiLoginEndpoint: '/api/v1/auth/login',
       apiRegisterEndpoint: '/api/v1/auth/register',
+
+      apiStatsBaseUrl: 'http://localhost:3002/',
+      apiStatsRangeEndpoint: 'api/v1/stats/dailystats',
     },
   },
 

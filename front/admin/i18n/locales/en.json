@@ -33,7 +33,9 @@
     }
   },
   "nav": {
+    "dashboard": "Dashboard",
     "general": "General",
+    "administration": "Administration",
     "pages": "Pages",
     "home": "Home",
     "email": "Email",
@@ -56,5 +58,17 @@
   "common": {
     "back_to_home": "Back to Home",
     "go_back": "Go Back"
-  }
+  },
+  "totalUsers": "Total Users",
+  "professionals": "Professionals",
+  "professional": "Professional",
+  "Individuals": "Individuals",
+  "Individual": "Individual",
+  "pendingAccounts": "Pending Accounts",
+  "suspendedAccounts": "Suspended Accounts",
+  "incompleteProfiles": "Incomplete Profiles",
+  "newUsersLast24h": "New Users / Last 24h",
+  "monthlyRegistrations": "Inscriptions par mois",
+  "topAgencies": "Top Agencies",
+  "userActivity": "Activité par type d'utilisateur"
 }

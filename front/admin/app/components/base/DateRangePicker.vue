@@ -2,20 +2,23 @@
 import type { DateRange } from 'reka-ui'
 import type { Ref } from 'vue'
 import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date'
-
+import { useStatsStore } from '@/stores/stats'
 import { Calendar as CalendarIcon } from 'lucide-vue-next'
 import { cn } from '@/lib/utils'
+
+const statsStore = useStatsStore()
+
+const start = statsStore.startDate.split('-')
+const end = statsStore.endDate.split('-')
+
+const value = ref({
+  start: new CalendarDate(+start[0], +start[1] - 1, +start[2]),
+  end: new CalendarDate(+end[0], +end[1] - 1, +end[2]),
+}) as Ref<DateRange>
 
 const df = new DateFormatter('en-US', {
   dateStyle: 'medium',
 })
-
-const calendarDate = new CalendarDate(2024, 0, 20)
-
-const value = ref({
-  start: calendarDate,
-  end: calendarDate.add({ days: 20 }),
-}) as Ref<DateRange>
 </script>
 
 <template>

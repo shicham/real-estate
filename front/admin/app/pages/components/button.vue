@@ -38,24 +38,36 @@
       </Card>
       <Card class="w-full">
         <CardHeader>
-          <CardTitle>Primary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div class="h-100px w-full flex items-center justify-center gap-4 overflow-hidden sm:h-200px">
-            <Button variant="primary">
-              Primary
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-      <Card class="w-full">
-        <CardHeader>
           <CardTitle>Secondary</CardTitle>
         </CardHeader>
         <CardContent>
           <div class="h-100px w-full flex items-center justify-center gap-4 overflow-hidden sm:h-200px">
             <Button variant="secondary">
               Secondary
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      <Card class="w-full">
+        <CardHeader>
+          <CardTitle>Outline secondary</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="h-100px w-full flex items-center justify-center gap-4 overflow-hidden sm:h-200px">
+            <Button variant="outlinesecondary">
+              Outline secondary
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+      <Card class="w-full">
+        <CardHeader>
+          <CardTitle>Info</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div class="h-100px w-full flex items-center justify-center gap-4 overflow-hidden sm:h-200px">
+            <Button variant="info">
+              Info
             </Button>
           </div>
         </CardContent>

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import NumberFlow from '@number-flow/vue'
 import { TrendingDown, TrendingUp, TrendingUpIcon } from 'lucide-vue-next'
-
 import { useI18n } from 'vue-i18n'
 
 definePageMeta({
@@ -19,10 +18,10 @@ const dataCard = ref({
 
 onMounted(() => {
   dataCard.value = {
-    totalRevenue: 1250.44,
-    newCustomers: 1234,
-    activeAccount: 45678,
-    growthRate: 4.5,
+    totalRevenue: 43038,
+    newCustomers: 28346,
+    activeAccount: 129368,
+    growthRate: 35367,
   }
 })
 
@@ -53,8 +52,62 @@ watch(isDesktop, () => {
     <main class="@container/main flex flex-1 flex-col gap-4 md:gap-8">
       <div class="grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
         <Card class="@container/card">
+          <CardContent>
+            <div class="flex align-items-center gap-3 flex-wrap">
+              <div class="leading-none">
+                <Avatar class="w-[3rem] h-[3rem]">
+                  <AvatarImage src="https://preview.sprukomarket.com/html/bootstrap/vyzor/dist/assets/images/faces/12.jpg" alt="Colm Tuite" />
+                  <AvatarFallback>CT</AvatarFallback>
+                </Avatar>
+              </div>
+              <div class="flex-[1_1_auto]">
+                <span> Total Deals </span>
+                <h5 class="block font-semibold mb-0">
+                  5,543
+                </h5>
+              </div>
+              <div class="text-end">
+                <Badge variant="outline" class="font-semibold text-success text-md">
+                  <TrendingDown class="font-semibold text-success text-md" />
+                  2.35%
+                </Badge>
+                <div class="text-muted text-12">
+                  This Year
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card class="@container/card">
+          <CardContent>
+            <div class="flex align-items-center gap-3 flex-wrap">
+              <div class="leading-none">
+                <Avatar class="w-[3rem] h-[3rem]">
+                  <AvatarImage src="https://preview.sprukomarket.com/html/bootstrap/vyzor/dist/assets/images/faces/12.jpg" alt="Colm Tuite" />
+                  <AvatarFallback>CT</AvatarFallback>
+                </Avatar>
+              </div>
+              <div class="flex-[1_1_auto]">
+                <span> Total Deals </span>
+                <h5 class="block font-semibold mb-0">
+                  5,543
+                </h5>
+              </div>
+              <div class="text-end">
+                <Badge variant="outline" class="font-semibold text-success text-md">
+                  <TrendingDown class="font-semibold text-success text-md" />
+                  2.35%
+                </Badge>
+                <div class="text-muted text-12">
+                  This Year
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card class="@container/card">
           <CardHeader>
-            <CardDescription>Total Revenue</CardDescription>
+            <CardDescription>Total Sales</CardDescription>
             <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               <NumberFlow
                 :value="dataCard.totalRevenue"
@@ -79,7 +132,7 @@ watch(isDesktop, () => {
         </Card>
         <Card class="@container/card">
           <CardHeader>
-            <CardDescription>New Customers</CardDescription>
+            <CardDescription>Total Expenses</CardDescription>
             <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               <NumberFlow
                 :value="dataCard.newCustomers"
@@ -103,7 +156,7 @@ watch(isDesktop, () => {
         </Card>
         <Card class="@container/card">
           <CardHeader>
-            <CardDescription>Active Accounts</CardDescription>
+            <CardDescription>Total Visitors</CardDescription>
             <CardTitle class="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
               <NumberFlow
                 :value="dataCard.activeAccount"
@@ -153,7 +206,7 @@ watch(isDesktop, () => {
       </div>
       <Card class="@container/card">
         <CardHeader>
-          <CardTitle>Total Visitors</CardTitle>
+          <CardTitle>Total Orders</CardTitle>
           <CardDescription>
             <span className="hidden @[540px]/card:block">
               Total for the last 3 months

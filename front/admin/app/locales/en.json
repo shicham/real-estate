@@ -26,6 +26,7 @@
       "weak_password": "Password must include uppercase, lowercase, a number and a special character."
     }
   },
+  "administration": "Administration",
   "nav": {
     "dashboard": "Dashboard",
     "general": "General",

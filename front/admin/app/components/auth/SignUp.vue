@@ -2,8 +2,8 @@
 import { useRouter } from '#app'
 import { Loader2 } from 'lucide-vue-next'
 import { ref } from 'vue'
-import { cn } from '@/lib/utils'
 import { useI18n } from 'vue-i18n'
+import { cn } from '@/lib/utils'
 
 const authStore = useAuthStore()
 const router = useRouter()

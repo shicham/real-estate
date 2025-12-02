@@ -50,5 +50,17 @@
   "common": {
     "back_to_home": "Retour à l'accueil",
     "go_back": "Retour"
-  }
+  },
+  "totalUsers": "Total Utilisateurs",
+  "professionals": "Professionnels",
+  "professional": "Professionnel",
+  "Individuals": "Particuliers",
+  "Individual": "Particulier",
+  "pendingAccounts": "Comptes en attente",
+  "suspendedAccounts": "Comptes suspendus",
+  "incompleteProfiles": "Profils incomplets",
+  "newUsersLast24h": "Nouveaux utilisateurs / 24h",
+  "monthlyRegistrations": "Inscriptions par mois",
+  "topAgencies": "Top agences",
+  "userActivity": "Activité par type d'utilisateur"
 }

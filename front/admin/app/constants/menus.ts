@@ -2,21 +2,41 @@ import type { NavMenu, NavMenuItems } from '~/types/nav'
 
 export const navMenu: NavMenu[] = [
   {
-    heading: 'General',
+    heading: 'Dashboard',
     items: [
       {
-        title: 'Home',
-        icon: 'i-lucide-home',
+        title: 'Sales',
+        icon: 'i-lucide-badge-percent',
         link: '/',
       },
       {
-        title: 'Email',
-        icon: 'i-lucide-mail',
+        title: 'Analytics',
+        icon: 'i-lucide-chart-pie',
         link: '/email',
       },
       {
-        title: 'Tasks',
-        icon: 'i-lucide-calendar-check-2',
+        title: 'Ecommerce',
+        icon: 'i-lucide-shopping-cart',
+        link: '/tasks',
+      },
+    ],
+  },
+  {
+    heading: 'administration',
+    items: [
+      {
+        title: 'administration',
+        icon: 'i-lucide-badge-percent',
+        link: '/administration',
+      },
+      {
+        title: 'Profils',
+        icon: 'i-lucide-chart-pie',
+        link: '/email',
+      },
+      {
+        title: 'Rôles',
+        icon: 'i-lucide-shopping-cart',
         link: '/tasks',
       },
     ],

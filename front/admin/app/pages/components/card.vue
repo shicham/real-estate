@@ -28,7 +28,7 @@
     <div class="flex flex-col gap-4 md:flex-row">
       <Card class="w-full md:w-1/2">
         <CardHeader>
-          <CardTitle>Basic</CardTitle>
+          <CardTitle>Featured</CardTitle>
         </CardHeader>
         <CardContent>
           <div class="w-full flex items-center justify-center gap-4 overflow-hidden">
@@ -77,6 +77,78 @@
               </CardFooter>
             </Card>
           </div>
+        </CardContent>
+      </Card>
+      <Card class="custom-card w-full md:w-1/2 text-center">
+        <CardHeader>
+          <CardTitle>Featured</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <h6 class="text-lg font-medium mb-2">
+            Breaking News !
+          </h6>
+          <p class="mb-4">
+            With supporting text below as a natural lead-in to additional content.
+          </p>
+          <Button>Primary</Button>
+          <Button variant="outlinesecondary">
+            Link
+          </Button>
+        </CardContent>
+        <CardFooter>
+          11.32pm
+        </CardFooter>
+      </Card>
+      <Card class="custom-card w-full md:w-1/2">
+        <CardHeader>
+          <div class="flex w-100">
+            <div class="mr-[1.5rem]">
+              <Avatar class="w-[3rem] h-[3rem]">
+                <AvatarImage src="https://preview.sprukomarket.com/html/bootstrap/vyzor/dist/assets/images/faces/12.jpg" alt="Colm Tuite" />
+                <AvatarFallback>CT</AvatarFallback>
+              </Avatar>
+            </div>
+            <div class="flex align-items-center justify-content-between w-100 flex-wrap">
+              <div class="mr-[1rem]">
+                <p class="text-muted mb-0">
+                  Posts
+                </p>
+                <p class="font-medium text-base mb-0">
+                  25
+                </p>
+              </div>
+              <div class="mr-[1rem]">
+                <p class="text-muted mb-0">
+                  Followers
+                </p>
+                <p class="font-medium text-base mb-0">
+                  1253
+                </p>
+              </div>
+              <div class="mr-[1rem]">
+                <p class="text-muted mb-0">
+                  Following
+                </p>
+                <p class="font-medium text-base mb-0">
+                  367
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div class="font-medium text-base">
+            Angelina Caprio
+          </div>
+          <div class="text-muted text-11 mb-4">
+            Angular Developer
+          </div>
+          <p class="text-sm font-medium mb-1">
+            About:
+          </p>
+          <p class="mb-0 ">
+            Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions
+          </p>
         </CardContent>
       </Card>
     </div>
