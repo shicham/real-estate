@@ -1,7 +1,8 @@
 
 import express from 'express'
 import dotenv from 'dotenv'
-import { connectMongo, connectRedis } from './lib/db'
+import { connectMongo } from './lib/mongo'
+import { connectRedis } from './lib/redis'
 import authRouter from './controllers/authController'
 import errorHandler from './middleware/errorHandler'
 import cors from 'cors'
