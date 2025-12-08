@@ -8,6 +8,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import compression from 'compression'
+import logger from './lib/logger'
 
 dotenv.config()
 
@@ -36,9 +37,9 @@ async function start() {
 	try {
 		await connectMongo(mongoUri)
 		connectRedis(redisUrl)
-		app.listen(PORT, () => console.log(`api-auth running on ${PORT}`))
+		app.listen(PORT, () => logger.info(`api-auth running on ${PORT}`))
 	} catch (err) {
-		console.error('Failed to start services', err)
+		logger.error('Failed to start services: %o', err)
 		process.exit(1)
 	}
 }
