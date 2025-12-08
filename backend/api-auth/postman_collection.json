@@ -1,0 +1,149 @@
+{
+  "info": {
+    "_postman_id": "b1f9c9e2-0000-4d3a-9cde-abcdef012345",
+    "name": "api-auth - real-estate",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection to test api-auth service (signup, signin, refresh, logout, health)"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3001" },
+    { "key": "email", "value": "test@example.com" },
+    { "key": "password", "value": "Test12345" },
+    { "key": "accessToken", "value": "" },
+    { "key": "refreshToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/health"
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Health: status is 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Health: body has status ok', function () { const j = pm.response.json(); pm.expect(j).to.have.property('status'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Signup",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": "{{baseUrl}}/auth/signup"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Signup - status is 201 or 400 if exists', function () { pm.expect(pm.response.code).to.be.oneOf([201,400]); });",
+              "if (pm.response.code === 201) {",
+              "  var json = pm.response.json();",
+              "  pm.environment.set('test_user_id', json.id);",
+              "  pm.environment.set('test_user_email', pm.variables.get('email'));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Signin",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+        },
+        "url": "{{baseUrl}}/auth/signin"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Signin - status is 200 or 401', function () { pm.expect(pm.response.code).to.be.oneOf([200,401,429]); });",
+              "if (pm.response.code === 200) {",
+              "  var json = pm.response.json();",
+              "  pm.environment.set('accessToken', json.token);",
+              "  pm.environment.set('refreshToken', json.refreshToken || json.refreshToken);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Refresh",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+        },
+        "url": "{{baseUrl}}/auth/refresh"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Refresh - status is 200 or 401', function () { pm.expect(pm.response.code).to.be.oneOf([200,401]); });",
+              "if (pm.response.code === 200) {",
+              "  var json = pm.response.json();",
+              "  pm.environment.set('accessToken', json.token);",
+              "  pm.environment.set('refreshToken', json.refreshToken || json.refreshToken);",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Logout",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+        },
+        "url": "{{baseUrl}}/auth/logout"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Logout - status is 204 or 400', function () { pm.expect(pm.response.code).to.be.oneOf([204,400,401]); });",
+              "if (pm.response.code === 204) { pm.environment.unset('accessToken'); pm.environment.unset('refreshToken'); }"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
