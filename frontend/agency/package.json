@@ -1,0 +1,13 @@
+{
+  "name": "@real-estate/agency",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxi dev",
+    "build": "nuxi build",
+    "start": "nuxi start"
+  },
+  "devDependencies": {
+    "nuxt": "^4.0.0"
+  }
+}
