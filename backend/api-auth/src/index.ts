@@ -1,11 +1,22 @@
+
 import express from 'express'
 import dotenv from 'dotenv'
 import { connectMongo, connectRedis } from './lib/db'
 import authRouter from './controllers/authController'
+import cors from 'cors'
+import helmet from 'helmet'
+import morgan from 'morgan'
+import compression from 'compression'
 
 dotenv.config()
 
 const app = express()
+
+// Common middlewares
+app.use(helmet())
+app.use(cors())
+app.use(morgan(process.env.LOG_FORMAT || 'combined'))
+app.use(compression())
 app.use(express.json())
 
 app.get('/', (_req, res) => res.send('api-auth service'))
