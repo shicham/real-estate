@@ -39,16 +39,18 @@ jobs:
       # Build backend services (api-auth, api-property, api-usermng)
       - name: Build backend services
         run: |
-          cd backend/api-auth && npm run build
-          cd ../api-property && npm run build
-          cd ../api-usermng && npm run build
+          set -e
+          cd backend/api-auth && npm run build && cd ../..
+          cd backend/api-property && npm run build && cd ../..
+          cd backend/api-usermng && npm run build && cd ../..
 
       # Build frontend applications (site, admin, agency)
       - name: Build frontend applications
         run: |
-          cd frontend/site && npm run build
-          cd ../admin && npm run build
-          cd ../agency && npm run build
+          set -e
+          cd frontend/site && npm run build && cd ../..
+          cd frontend/admin && npm run build && cd ../..
+          cd frontend/agency && npm run build && cd ../..
 
       # Step 5: Run tests
       # Note: Currently no test scripts are defined in the project
