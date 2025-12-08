@@ -1,4 +1,3 @@
-import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 import AppError from '../lib/AppError'
 import { connectRedis, getRedis } from '../lib/redis'
