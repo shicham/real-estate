@@ -17,7 +17,19 @@ const app = express()
 
 // Common middlewares
 app.use(helmet())
-app.use(cors())
+app.use(cors({
+	origin: process.env.ALLOWED_ORIGINS?.split(',') || [
+		'http://localhost:3000',
+		'http://localhost:3001',
+		'http://localhost:3010',
+		'http://localhost:3020',
+		'https://localhost:3000',
+		'https://localhost:3010',
+		'https://localhost:3020'
+	],
+	methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+	credentials: true
+}))
 app.use(morgan(process.env.LOG_FORMAT || 'combined'))
 app.use(compression())
 app.use(express.json())
