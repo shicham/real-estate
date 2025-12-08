@@ -3,6 +3,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import { connectMongo, connectRedis } from './lib/db'
 import authRouter from './controllers/authController'
+import errorHandler from './middleware/errorHandler'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
@@ -43,3 +44,6 @@ async function start() {
 }
 
 start()
+
+// register error handler (should be after routes)
+app.use(errorHandler)
