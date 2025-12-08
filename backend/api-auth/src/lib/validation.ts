@@ -1,0 +1,18 @@
+import { z } from 'zod'
+
+export const signupSchema = z.object({
+  email: z.string().email({ message: 'Invalid email address' }),
+  password: z.string()
+    .min(8, { message: 'Password must be at least 8 characters' })
+    .regex(/[A-Za-z]/, { message: 'Password must contain letters' })
+    .regex(/\d/, { message: 'Password must contain numbers' })
+})
+
+export const signinSchema = z.object({
+  email: z.string().email({ message: 'Invalid email address' }),
+  password: z.string().min(1, { message: 'Password is required' })
+})
+
+export function formatZodErrors(err: z.ZodError) {
+  return err.errors.map(e => ({ path: e.path.join('.'), message: e.message }))
+}
