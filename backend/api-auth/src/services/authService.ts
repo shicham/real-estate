@@ -15,25 +15,54 @@ export class AuthService {
   }
 
   async signin(email: string, password: string) {
-    const attempts = await tokenService.getLoginAttempts(email)
-    const limit = tokenService.getAttemptLimit()
-    if (attempts >= limit) {
-      throw new AppError('Too many login attempts. Try again later.', 429)
+    // Check DB lock first
+    const user = await User.findOne({ email }).exec()
+    const attemptLimit = tokenService.getAttemptLimit()
+
+    if (user && user.lockUntil && user.lockUntil > new Date()) {
+      throw new AppError('Account temporarily locked due to repeated failed login attempts', 429)
     }
 
-    const user = await User.findOne({ email }).exec()
+    // Try Redis attempts counter first (fast), fallback to DB if unavailable
+    try {
+      const attempts = await tokenService.getLoginAttempts(email)
+      if (attempts >= attemptLimit) {
+        // mark DB lock as well for consistency
+        if (user) {
+          const attemptWindow = Number(process.env.LOGIN_ATTEMPT_WINDOW || 15 * 60) * 1000
+          await User.findByIdAndUpdate(user._id, { lockUntil: new Date(Date.now() + attemptWindow) }).exec()
+        }
+        throw new AppError('Too many login attempts. Try again later.', 429)
+      }
+    } catch (err) {
+      // If Redis is not available, continue — DB lock will be checked above and DB counters used below
+    }
+
     if (!user) {
-      await tokenService.incrementLoginAttempts(email)
+      // increment Redis attempts if possible, otherwise nothing to do in DB
+      try { await tokenService.incrementLoginAttempts(email) } catch (_) {}
       throw new AppError('Invalid credentials', 401)
     }
 
     const match = await bcrypt.compare(password, user.passwordHash)
     if (!match) {
-      await tokenService.incrementLoginAttempts(email)
+      // increment both Redis and DB counters
+      try { await tokenService.incrementLoginAttempts(email) } catch (_) {}
+
+      const updated = await User.findByIdAndUpdate(user._id, { $inc: { loginAttempts: 1 } }, { new: true }).exec()
+      const currentAttempts = updated?.loginAttempts ?? 0
+      if (currentAttempts >= attemptLimit) {
+        const attemptWindow = Number(process.env.LOGIN_ATTEMPT_WINDOW || 15 * 60) * 1000
+        await User.findByIdAndUpdate(user._id, { lockUntil: new Date(Date.now() + attemptWindow) }).exec()
+      }
+
       throw new AppError('Invalid credentials', 401)
     }
 
-    await tokenService.resetLoginAttempts(email)
+    // success: reset attempts in both stores
+    try { await tokenService.resetLoginAttempts(email) } catch (_) {}
+    await User.findByIdAndUpdate(user._id, { loginAttempts: 0, lockUntil: null }).exec()
+
     const tokens = await tokenService.generateTokens(user._id.toString(), user.email)
     return { ...tokens, user: { id: user._id.toString(), email: user.email } }
   }
