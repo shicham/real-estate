@@ -9,6 +9,7 @@
     { "key": "baseUrl", "value": "http://localhost:3001" },
     { "key": "email", "value": "test@example.com" },
     { "key": "password", "value": "Test12345" },
+    { "key": "preferredLanguage", "value": "en" },
     { "key": "accessToken", "value": "" },
     { "key": "refreshToken", "value": "" }
   ],
@@ -42,7 +43,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\"\n}"
+          "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"preferredLanguage\": \"{{preferredLanguage}}\"\n}"
         },
         "url": "{{baseUrl}}/auth/signup"
       },

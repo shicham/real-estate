@@ -6,6 +6,12 @@ export const signupSchema = z.object({
     .min(8, { message: 'Password must be at least 8 characters' })
     .regex(/[A-Za-z]/, { message: 'Password must contain letters' })
     .regex(/\d/, { message: 'Password must contain numbers' })
+  , preferredLanguage: z.string().min(2).max(10).optional()
+  , firstName: z.string().min(1).max(100).optional()
+  , lastName: z.string().min(1).max(100).optional()
+  , sex: z.enum(['male','female','other']).optional()
+  , roles: z.array(z.string()).optional()
+  , profiles: z.array(z.string()).optional()
 })
 
 export const signinSchema = z.object({

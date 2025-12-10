@@ -10,6 +10,7 @@ export class AuthController {
     this.router.post('/signin', this.signin.bind(this))
     this.router.post('/refresh', this.refresh.bind(this))
     this.router.post('/logout', this.logout.bind(this))
+    this.router.get('/verify-email', this.verifyEmail.bind(this))
   }
 
   async signup(req: Request, res: Response, next: NextFunction) {
@@ -17,8 +18,8 @@ export class AuthController {
       const parsed = signupSchema.safeParse(req.body)
       if (!parsed.success) return res.status(400).json({ errors: formatZodErrors(parsed.error) })
 
-      const { email, password } = parsed.data
-      const user = await authService.signup(email, password)
+      const { email, password, preferredLanguage, firstName, lastName, sex, roles, profiles } = parsed.data
+      const user = await authService.signup(email, password, preferredLanguage, firstName, lastName, sex, roles, profiles)
       res.status(201).json(user)
     } catch (err: any) {
       next(err)
@@ -31,7 +32,10 @@ export class AuthController {
       if (!parsed.success) return res.status(400).json({ errors: formatZodErrors(parsed.error) })
 
       const { email, password } = parsed.data
-      const result = await authService.signin(email, password)
+      // determine client IP (support X-Forwarded-For)
+      const xf = req.headers['x-forwarded-for']
+      const ip = typeof xf === 'string' && xf.length ? xf.split(',')[0].trim() : req.ip
+      const result = await authService.signin(email, password, ip as string)
       res.json(result)
     } catch (err: any) {
       next(err)
@@ -55,6 +59,17 @@ export class AuthController {
       if (!refreshToken) return res.status(400).json({ error: 'refreshToken required' })
       await authService.logout(refreshToken)
       res.status(204).send()
+    } catch (err: any) {
+      next(err)
+    }
+  }
+
+  async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const token = (req.query.token as string) || req.body?.token
+      if (!token) return res.status(400).json({ error: 'token required' })
+      const result = await authService.verifyEmail(token)
+      res.json(result)
     } catch (err: any) {
       next(err)
     }

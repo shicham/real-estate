@@ -19,6 +19,10 @@ class TokenService {
     this.attemptWindow = Number(process.env.LOGIN_ATTEMPT_WINDOW || 15 * 60)
   }
 
+  // email verification secret and expiry
+  readonly emailSecret = process.env.JWT_EMAIL_SECRET || 'change-this-email-secret'
+  readonly emailExpires = process.env.JWT_EMAIL_EXPIRES || '1d'
+
   private parseExpiryToSeconds(value: string): number {
     if (!value) return 0
     const m = value.match(/^(\d+)([smhd])$/)
@@ -56,9 +60,9 @@ class TokenService {
     }
   }
 
-  async generateTokens(userId: string, email?: string) {
-    const access = this.createJwt({ sub: userId, email }, this.accessSecret, this.accessExpires)
-    const refresh = this.createJwt({ sub: userId, email }, this.refreshSecret, this.refreshExpires)
+  async generateTokens(userId: string, email?: string, preferredLanguage?: string) {
+    const access = this.createJwt({ sub: userId, email, preferredLanguage }, this.accessSecret, this.accessExpires)
+    const refresh = this.createJwt({ sub: userId, email, preferredLanguage }, this.refreshSecret, this.refreshExpires)
 
     const redis = await this.ensureRedis()
     const secs = this.parseExpiryToSeconds(this.refreshExpires)
@@ -83,7 +87,8 @@ class TokenService {
 
     const payload = jwt.decode(oldRefresh) as any
     const email = payload?.email
-    const tokens = await this.generateTokens(userId, email)
+    const preferredLanguage = payload?.preferredLanguage
+    const tokens = await this.generateTokens(userId, email, preferredLanguage)
 
     await redis.del(keyOld)
     return tokens
@@ -134,6 +139,19 @@ class TokenService {
 
   getAttemptLimit() {
     return this.attemptLimit
+  }
+
+  generateEmailToken(userId: string, email?: string) {
+    return this.createJwt({ sub: userId, email }, this.emailSecret, this.emailExpires)
+  }
+
+  validateEmailToken(token: string) {
+    try {
+      const payload = jwt.verify(token, this.emailSecret) as any
+      return payload
+    } catch (err) {
+      throw new AppError('Invalid or expired email verification token', 401)
+    }
   }
 }
 
