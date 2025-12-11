@@ -23,7 +23,9 @@ class MailService {
   }
 
   async sendMail(opts: MailOptions) {
+
     const from = process.env.EMAIL_FROM || `no-reply@${process.env.EMAIL_DOMAIN || 'example.com'}`
+    console.info('Sending email to', opts.to)
     await this.transporter.sendMail({ from, to: opts.to, subject: opts.subject, html: opts.html, text: opts.text })
   }
 
