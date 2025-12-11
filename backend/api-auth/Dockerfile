@@ -3,31 +3,31 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Copy package manifests first (speeds up cache)
+# Copy package manifests first (helps cache)
 COPY package.json package-lock.json* ./
 
-# Install production deps: prefer npm ci if lockfile exists, otherwise npm install
-RUN if [ -f package-lock.json ]; then \
-      npm ci --omit=dev; \
-    else \
-      npm install --omit=dev; \
-    fi
+# Install all deps (including dev) so we can run the TypeScript compiler
+RUN npm ci
 
 # Copy source
 COPY . .
 
-# Build TypeScript (assumes there's a build script that outputs to dist)
+# Build TypeScript (outputs to dist)
 RUN npm run build
 
-# Final runtime image (smaller)
+# Remove devDependencies to keep node_modules small for runtime
+RUN npm prune --production
+
+# Runtime image
 FROM node:20-alpine AS runtime
 WORKDIR /app
 
-# Copy only production deps from build stage node_modules and dist
+# Copy only production node_modules and compiled output
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
+COPY --from=build /app/package.json ./package.json
 
-EXPOSE 3001
 ENV NODE_ENV=production
+EXPOSE 3001
 
 CMD ["node", "dist/index.js"]
