@@ -24,7 +24,7 @@ declare module 'nodemailer' {
   }
 
   export function createTransport(config?: any): Transporter
-  export function getTestMessageUrl?(info: any): string | false
+  export function getTestMessageUrl(info: any): string | false
 
   const nodemailer: {
     createTransport: typeof createTransport
