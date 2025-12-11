@@ -3,23 +3,29 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Copy package manifests first (helps cache)
+# Copy package manifests first (helps Docker layer cache)
 COPY package.json package-lock.json* ./
 
-# Install all deps (including dev) so we can run the TypeScript compiler
-RUN npm ci
+# Prefer npm ci when a lockfile exists, otherwise fallback to npm install,
+# install all deps so we can run the TypeScript compiler
+RUN if [ -f package-lock.json ]; then \
+      npm ci; \
+    else \
+      npm install; \
+    fi
 
 # Copy source
 COPY . .
 
-# Build TypeScript (outputs to dist)
+# Build TypeScript (assumes there's a build script that outputs to dist)
 RUN npm run build
 
-# Remove devDependencies to keep node_modules small for runtime
+# Remove devDependencies so we only keep production deps for the runtime image
 RUN npm prune --production
 
-# Runtime image
+# Final runtime image
 FROM node:20-alpine AS runtime
+
 WORKDIR /app
 
 # Copy only production node_modules and compiled output
