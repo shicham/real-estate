@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import * as jwt from 'jsonwebtoken'
 import AppError from '../lib/AppError'
 import { connectRedis, getRedis } from '../lib/redis'
 
@@ -46,8 +46,10 @@ class TokenService {
     }
   }
 
-  private createJwt(payload: object, secret: string, expiresIn: string) {
-    return jwt.sign(payload, secret, { expiresIn })
+  // Accept string|number|undefined and cast to jwt.SignOptions to satisfy TypeScript
+  private createJwt(payload: object, secret: jwt.Secret, expiresIn: string | number | undefined) {
+    const opts = { expiresIn } as unknown as jwt.SignOptions
+    return jwt.sign(payload as jwt.JwtPayload | string, secret, opts)
   }
 
   private async ensureRedis() {

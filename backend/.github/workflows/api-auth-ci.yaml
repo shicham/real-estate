@@ -1,0 +1,145 @@
+name: CI - api-auth
+
+on:
+  push:
+    paths:
+      - 'backend/api-auth/**'
+      - '.github/workflows/api-auth-ci.yml'
+  pull_request:
+    paths:
+      - 'backend/api-auth/**'
+
+jobs:
+  test:
+    name: Test and Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        working-directory: backend/api-auth
+        run: npm ci
+
+      - name: Run tests
+        working-directory: backend/api-auth
+        run: npm test
+
+      - name: Build
+        working-directory: backend/api-auth
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-auth-dist
+          path: backend/api-auth/dist
+
+  docker:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend/api-auth
+          file: ./backend/api-auth/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/api-auth:${{ github.sha }}name: CI - api-auth
+
+on:
+  push:
+    paths:
+      - 'backend/api-auth/**'
+      - '.github/workflows/api-auth-ci.yml'
+  pull_request:
+    paths:
+      - 'backend/api-auth/**'
+
+jobs:
+  test:
+    name: Test and Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        working-directory: backend/api-auth
+        run: npm ci
+
+      - name: Run tests
+        working-directory: backend/api-auth
+        run: npm test
+
+      - name: Build
+        working-directory: backend/api-auth
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-auth-dist
+          path: backend/api-auth/dist
+
+  docker:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend/api-auth
+          file: ./backend/api-auth/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/api-auth:${{ github.sha }}

@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer'
+import nodemailer, { Transporter } from 'nodemailer'
 
 type MailOptions = {
   to: string
@@ -8,22 +8,23 @@ type MailOptions = {
 }
 
 class MailService {
-  transporter: nodemailer.Transporter
+  transporter: Transporter
 
   constructor() {
     this.transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'localhost',
       port: Number(process.env.SMTP_PORT || 587),
       secure: (process.env.SMTP_SECURE === 'true') || false,
-      auth: process.env.SMTP_USER ? {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      } : undefined
+      auth: process.env.SMTP_USER
+        ? {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS
+          }
+        : undefined
     })
   }
 
   async sendMail(opts: MailOptions) {
-
     const from = process.env.EMAIL_FROM || `no-reply@${process.env.EMAIL_DOMAIN || 'example.com'}`
     console.info('Sending email to', opts.to)
     await this.transporter.sendMail({ from, to: opts.to, subject: opts.subject, html: opts.html, text: opts.text })
