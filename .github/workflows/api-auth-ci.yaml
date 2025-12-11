@@ -1,0 +1,105 @@
+name: CI - api-auth
+
+on:
+  push:
+    paths:
+      - 'backend/api-auth/**'
+      - '.github/workflows/api-auth-ci.yml'
+  pull_request:
+    paths:
+      - 'backend/api-auth/**'
+
+permissions:
+  contents: read   # permisssions par défaut, overridden in job when needed
+
+jobs:
+  test:
+    name: Test and Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        working-directory: backend/api-auth
+        run: npm ci
+
+      - name: Run tests
+        working-directory: backend/api-auth
+        run: npm test
+
+      - name: Build
+        working-directory: backend/api-auth
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-auth-dist
+          path: backend/api-auth/dist
+
+  release_and_publish:
+    name: Release & Publish Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write    # needed to push commits/tags
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      # Bump the package version only if the run is not triggered by the GitHub Actions bot.
+      # This avoids infinite loops when the job pushes a commit/tag back to the repository.
+      - name: Bump version (patch)
+        working-directory: backend/api-auth
+        if: ${{ github.actor != 'github-actions[bot]' }}
+        run: |
+          echo "Current version: $(node -p \"require('./package.json').version\")"
+          npm version patch -m "chore(release): %s [ci skip]"
+          # push commit and tags back to repo
+          git push origin HEAD:main
+          git push origin --tags
+
+      - name: Get package version
+        id: get_version
+        run: |
+          echo "VERSION=$(node -p \"require('./backend/api-auth/package.json').version\")" >> $GITHUB_ENV
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend/api-auth
+          file: ./backend/api-auth/Dockerfile
+          push: true
+          tags: |
+            docker.io/hsassa/api-auth:${{ env.VERSION }}
+            docker.io/hsassa/api-auth:latest
