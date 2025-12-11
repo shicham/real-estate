@@ -45,7 +45,6 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          # include matrix and run id so artifacts from different matrix jobs / retries do not conflict
           name: api-auth-dist-${{ matrix.node-version }}-${{ github.run_id }}
           path: backend/api-auth/dist
 
@@ -77,17 +76,19 @@ jobs:
         working-directory: backend/api-auth
         if: ${{ github.actor != 'github-actions[bot]' }}
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "Current version: $VERSION"
+          # bump package.json version (npm will update package.json and create a git tag)
           npm version patch -m "chore(release): %s [ci skip]"
-          # push commit and tags back to repo
+          # push commit and tag to origin/main
           git push origin HEAD:main
           git push origin --tags
+          # write the new version to GITHUB_ENV so subsequent steps can read it
+          node -e "const fs=require('fs'); const v=require('./package.json').version; fs.appendFileSync(process.env.GITHUB_ENV, 'VERSION='+v+'\\n')"
 
-      - name: Get package version
-        id: get_version
+      - name: (fallback) ensure VERSION is set if bump skipped
+        working-directory: backend/api-auth
+        if: ${{ github.actor == 'github-actions[bot]' }}
         run: |
-          echo "VERSION=$(node -p \"require('./backend/api-auth/package.json').version\")" >> $GITHUB_ENV
+          node -e "const fs=require('fs'); const v=require('./package.json').version; fs.appendFileSync(process.env.GITHUB_ENV, 'VERSION='+v+'\\n')"
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
