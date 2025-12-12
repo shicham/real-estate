@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-auth-config
+  namespace: realestate
+data:
+  # Non secrets / defaults for the app
+  NODE_ENV: "production"
+  PORT: "3001"
+  BACKEND_URL: "https://api.viridial.com"
+  FRONTEND_URL: "https://app.viridial.com"
+  EMAIL_DOMAIN: "viridial.com"
+  EMAIL_FROM: "no-reply@viridial.com"
+  LOG_LEVEL: "info"
+  ALLOWED_ORIGINS: "https://app.viridial.com"
