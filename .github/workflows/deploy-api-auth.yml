@@ -1,4 +1,4 @@
-name: Deploy api-auth (deploy only — no docker build/push)
+name: Deploy api-auth
 
 # Trigger when the CI workflow that builds & pushes the image completes,
 # and allow manual runs with an optional image_tag override.
