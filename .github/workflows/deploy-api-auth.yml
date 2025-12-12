@@ -1,72 +1,82 @@
-name: Build, Publish Docker & Deploy api-auth (no tests)
+name: Deploy api-auth (deploy only — no docker build/push)
 
+# Trigger when the CI workflow that builds & pushes the image completes,
+# and allow manual runs with an optional image_tag override.
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'backend/api-auth/**'
-      - '.github/workflows/deploy-api-auth.yml'
-      - 'k8s/**'
-  workflow_dispatch: {}
+  workflow_run:
+    workflows: ["CI - api-auth"]
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Optional image tag to deploy (overrides package.json)'
+        required: false
+        default: ''
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  publish:
-    name: Build & Push Docker image
+  deploy:
+    name: Deploy to Kubernetes (no build/push)
+    # Run only when the CI workflow succeeded OR when manually triggered.
+    if: >
+      (github.event_name == 'workflow_dispatch') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Set VERSION from package.json (or fallback to commit SHA)
+      - name: Determine image tag to deploy
+        id: set_image
         run: |
-          if [ -f backend/api-auth/package.json ]; then
-            node -e "const fs=require('fs'); const v=require('./backend/api-auth/package.json').version; fs.appendFileSync(process.env.GITHUB_ENV,'VERSION='+v+'\\n')"
-          else
-            echo "VERSION=${GITHUB_SHA}" >> $GITHUB_ENV
+          # If manual run and image_tag provided, use it
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.image_tag }}" ]; then
+            echo "IMAGE_TAG=${{ github.event.inputs.image_tag }}" >> $GITHUB_ENV
+            echo "Using manual override image_tag=${{ github.event.inputs.image_tag }}"
+            exit 0
           fi
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+          # Prefer package.json version if available (this should reflect the version pushed by CI)
+          if [ -f backend/api-auth/package.json ]; then
+            node -e "const fs=require('fs'); const v=require('./backend/api-auth/package.json').version; fs.appendFileSync(process.env.GITHUB_ENV, 'IMAGE_TAG='+v+'\\n'); console.log('IMAGE_TAG='+v)"
+          else
+            # Fallback to the head SHA of the triggering workflow run (short)
+            if [ "${{ github.event_name }}" = "workflow_run" ]; then
+              SHA="${{ github.event.workflow_run.head_sha }}"
+              SHORT="${SHA:0:7}"
+              echo "IMAGE_TAG=${SHORT}" >> $GITHUB_ENV
+              echo "No package.json found; using head sha short tag=${SHORT}" 
+            else
+              echo "IMAGE_TAG=latest" >> $GITHUB_ENV
+              echo "No package.json found and not a workflow_run; defaulting to 'latest'"
+            fi
+          fi
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          registry: docker.io
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          echo "IMAGE=hsassa/api-auth:${IMAGE_TAG}" >> $GITHUB_ENV
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: ./backend/api-auth
-          file: ./backend/api-auth/Dockerfile
-          push: true
-          tags: |
-            docker.io/hsassa/api-auth:${{ env.VERSION }}
-            docker.io/hsassa/api-auth:latest
-
-  deploy:
-    name: Deploy to Kubernetes
-    runs-on: ubuntu-latest
-    needs: publish
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: '1.30.0'
+      - name: Install kubectl (v1.28.15)
+        run: |
+          set -e
+          KUBECTL_VERSION="v1.28.15"
+          echo "Installing kubectl ${KUBECTL_VERSION}"
+          ARCH="$(uname -m)"
+          case "$ARCH" in
+            x86_64|amd64) BIN_ARCH=amd64 ;;
+            aarch64|arm64) BIN_ARCH=arm64 ;;
+            *) echo "Unsupported arch: $ARCH"; exit 1 ;;
+          esac
+          curl -fsSLO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${BIN_ARCH}/kubectl"
+          curl -fsSLO "https://dl.k8s.io/${KUBECTL_VERSION}/bin/linux/${BIN_ARCH}/kubectl.sha256"
+          echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check -
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/kubectl
+          kubectl version --client --short
 
       - name: Configure kubeconfig
         env:
@@ -76,14 +86,26 @@ jobs:
           echo "$KUBE_CONFIG_DATA" | base64 --decode > $HOME/.kube/config
           chmod 600 $HOME/.kube/config
           kubectl version --client --short
+          kubectl get ns realestate --ignore-not-found
 
       - name: Show current deployment image (before)
-        run: kubectl -n realestate get deployment api-auth -o=jsonpath='{.spec.template.spec.containers[0].image}' || true
+        run: |
+          kubectl -n realestate get deployment api-auth -o=jsonpath='{.spec.template.spec.containers[0].image}' || true
 
       - name: Update k8s deployment image and set version label
+        env:
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          IMAGE: ${{ env.IMAGE }}
         run: |
-          kubectl -n realestate set image deployment/api-auth api-auth=docker.io/hsassa/api-auth:${{ env.VERSION }}
-          kubectl -n realestate patch deployment api-auth -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"version\":\"${{ env.VERSION }}\"}}}}}"
+          if [ -z "${IMAGE_TAG}" ]; then
+            echo "IMAGE_TAG is empty — aborting"
+            exit 1
+          fi
+          FULL_IMAGE="docker.io/hsassa/api-auth:${IMAGE_TAG}"
+          echo "Setting image to ${FULL_IMAGE}"
+          kubectl -n realestate set image deployment/api-auth api-auth=${FULL_IMAGE}
+          # Patch the template label so the deployment picks up a new pod template hash
+          kubectl -n realestate patch deployment api-auth -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"version\":\"${IMAGE_TAG}\"}}}}}"
           kubectl -n realestate rollout status deployment/api-auth --timeout=180s
 
       - name: Verify pods
