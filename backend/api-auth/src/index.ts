@@ -2,9 +2,9 @@
 import dotenv from 'dotenv'
 dotenv.config()
 
-import logger from './lib/logger'
-import { connectMongo } from './lib/mongo'
-import { connectRedis } from './lib/redis'
+import logger from './lib/logger.js'
+import { connectMongo } from './lib/mongo.js'
+import { connectRedis } from './lib/redis.js'
 import app from './app'
 
 async function start() {
