@@ -1,4 +1,4 @@
-name: Deploy api-auth (deploy only — no docker build/push)
+name: Deploy api-auth (deploy only — apply manifests if missing)
 
 # Trigger when the CI workflow that builds & pushes the image completes,
 # and allow manual runs with an optional image_tag override.
@@ -20,8 +20,7 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy to Kubernetes (no build/push)
-    # Run only when the CI workflow succeeded OR when manually triggered.
+    name: Deploy to Kubernetes (no docker build/push)
     if: >
       (github.event_name == 'workflow_dispatch') ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
@@ -51,7 +50,7 @@ jobs:
               SHA="${{ github.event.workflow_run.head_sha }}"
               SHORT="${SHA:0:7}"
               echo "IMAGE_TAG=${SHORT}" >> $GITHUB_ENV
-              echo "No package.json found; using head sha short tag=${SHORT}" 
+              echo "No package.json found; using head sha short tag=${SHORT}"
             else
               echo "IMAGE_TAG=latest" >> $GITHUB_ENV
               echo "No package.json found and not a workflow_run; defaulting to 'latest'"
@@ -76,7 +75,6 @@ jobs:
           echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check -
           chmod +x kubectl
           sudo mv kubectl /usr/local/bin/kubectl
-          # Use a compatible version check
           kubectl version --client
 
       - name: Configure kubeconfig
@@ -89,24 +87,41 @@ jobs:
           kubectl version --client
           kubectl get ns realestate --ignore-not-found
 
-      - name: Show current deployment image (before)
-        run: |
-          kubectl -n realestate get deployment api-auth -o=jsonpath='{.spec.template.spec.containers[0].image}' || true
-
-      - name: Update k8s deployment image and set version label
+      - name: Ensure deployment exists (apply manifests if missing) and update image
         env:
           IMAGE_TAG: ${{ env.IMAGE_TAG }}
-          IMAGE: ${{ env.IMAGE }}
         run: |
+          set -e
           if [ -z "${IMAGE_TAG}" ]; then
             echo "IMAGE_TAG is empty — aborting"
             exit 1
           fi
+
+          # If deployment exists, we will update image; otherwise apply manifests
+          if kubectl -n realestate get deployment api-auth >/dev/null 2>&1; then
+            echo "Deployment api-auth exists in namespace realestate"
+          else
+            echo "Deployment api-auth not found — applying k8s manifests from k8s/"
+            kubectl apply -f k8s/namespace.yaml
+            kubectl apply -f k8s/configmap.yaml || true
+            kubectl apply -f k8s/service.yaml || true
+
+            # Check secret presence (the secret should be created beforehand or via a secure step)
+            if ! kubectl -n realestate get secret api-auth-secrets >/dev/null 2>&1; then
+              echo "ERROR: secret api-auth-secrets not found in namespace realestate."
+              echo "Create it manually or add a secure creation step in the workflow."
+              exit 1
+            fi
+
+            kubectl apply -f k8s/deployment.yaml
+            echo "Manifests applied"
+          fi
+
+          # Update image and bump template label so rollout occurs
           FULL_IMAGE="docker.io/hsassa/api-auth:${IMAGE_TAG}"
           echo "Setting image to ${FULL_IMAGE}"
           kubectl -n realestate set image deployment/api-auth api-auth=${FULL_IMAGE}
-          # Patch the template label so the deployment picks up a new pod template hash
-          kubectl -n realestate patch deployment/api-auth -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"version\":\"${IMAGE_TAG}\"}}}}}"
+          kubectl -n realestate patch deployment api-auth -p "{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"version\":\"${IMAGE_TAG}\"}}}}}"
           kubectl -n realestate rollout status deployment/api-auth --timeout=180s
 
       - name: Verify pods
