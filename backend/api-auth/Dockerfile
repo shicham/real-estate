@@ -1,31 +1,21 @@
-# backend/api-auth/Dockerfile
 FROM node:20-alpine AS build
-
 WORKDIR /app
 
-# Copy package manifests first (helps Docker layer cache)
+# Copy package manifests first for caching
 COPY package.json package-lock.json* ./
 
-# Prefer npm ci when a lockfile exists, otherwise fallback to npm install,
-# install all deps so we can run the TypeScript compiler
-RUN if [ -f package-lock.json ]; then \
-      npm ci; \
-    else \
-      npm install; \
-    fi
+# Install all deps (including dev) so tsc is available
+RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
-# Copy source
+# Copy source and build
 COPY . .
-
-# Build TypeScript (assumes there's a build script that outputs to dist)
 RUN npm run build
 
-# Remove devDependencies so we only keep production deps for the runtime image
+# Remove devDependencies
 RUN npm prune --production
 
-# Final runtime image
+# Final image
 FROM node:20-alpine AS runtime
-
 WORKDIR /app
 
 # Copy only production node_modules and compiled output
