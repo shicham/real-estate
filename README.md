@@ -40,3 +40,19 @@ git add .
 git commit -m "scaffold real-estate workspace"
 # create repo on GitHub and follow instructions to push
 ```
+
+- Build de l’image Docker
+docker build -t api-auth .
+- Démarrer le conteneur
+docker run -d --name api-auth -p 3001:3001 --env-file .env api-auth
+- Voir les logs (démarrage, erreurs, logger, etc.)
+docker logs -f api-auth
+- Redémarrer le container
+docker restart api-auth
+- Arrêter + supprimer :
+docker rm -f api-auth
+- Rebuild :
+docker build -t api-auth .
+- Rerun :
+docker run -d --name api-auth -p 3001:3001 --env-file .env api-auth
+
