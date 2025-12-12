@@ -4,8 +4,8 @@ import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import compression from 'compression'
-import authRouter from './controllers/authController'
-import errorHandler from './middleware/errorHandler'
+import authRouter from './controllers/authController.js'
+import errorHandler from './middleware/errorHandler.js'
 
 const app = express()
 

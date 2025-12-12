@@ -1,11 +1,11 @@
 import bcrypt from 'bcryptjs'
-import { User } from '../models/User'
-import { Role } from '../models/Role'
-import { Profile } from '../models/Profile'
-import AppError from '../lib/AppError'
-import tokenService from './tokenService'
-import geoService from './geoService'
-import mailService from './mailService'
+import { User } from '../models/User.js'
+import { Role } from '../models/Role.js'
+import { Profile } from '../models/Profile.js'
+import AppError from '../lib/AppError.js'
+import tokenService from './tokenService.js'
+import geoService from './geoService.js'
+import mailService from './mailService.js'
 
 export class AuthService {
   async signup(

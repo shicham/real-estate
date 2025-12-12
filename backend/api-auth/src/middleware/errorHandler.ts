@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
-import AppError from '../lib/AppError'
-import logger from '../lib/logger'
+import AppError from '../lib/AppError.js'
+import logger from '../lib/logger.js'
 
 export function errorHandler(err: any, _req: Request, res: Response, _next: NextFunction) {
   if (err instanceof AppError) {

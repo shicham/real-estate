@@ -5,7 +5,7 @@ dotenv.config()
 import logger from './lib/logger.js'
 import { connectMongo } from './lib/mongo.js'
 import { connectRedis } from './lib/redis.js'
-import app from './app'
+import app from './app.js'
 
 async function start() {
   const PORT = process.env.PORT || 3001

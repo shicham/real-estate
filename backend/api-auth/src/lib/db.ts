@@ -3,6 +3,6 @@
 // Import from those files directly in new code. This file re-exports
 // the functions for backward compatibility.
 
-export { connectMongo, mongoose } from './mongo'
-export { connectRedis, getRedis } from './redis'
+export { connectMongo, mongoose } from './mongo.js'
+export { connectRedis, getRedis } from './redis.js'
 

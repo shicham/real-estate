@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
-import authService from '../services/authService'
-import { signupSchema, signinSchema, formatZodErrors } from '../lib/validation'
+import authService from '../services/authService.js'
+import { signupSchema, signinSchema, formatZodErrors } from '../lib/validation.js'
 
 export class AuthController {
   public router = Router()

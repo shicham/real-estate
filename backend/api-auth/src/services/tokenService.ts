@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken'
-import AppError from '../lib/AppError'
-import { connectRedis, getRedis } from '../lib/redis'
+import AppError from '../lib/AppError.js'
+import { connectRedis, getRedis } from '../lib/redis.js'
 
 class TokenService {
   readonly accessSecret: string
