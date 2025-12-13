@@ -52,7 +52,7 @@ class EmailService {
       }
 
       const info = await this.transporter.sendMail(mailOptions)
-      logger.info(`Email sent successfully to ${to}:`, info.messageId)
+      logger.info(`Email sent successfully to ${to}:`, info)
       return info
     } catch (error) {
       logger.error(`Failed to send email to ${to}:`, error)
