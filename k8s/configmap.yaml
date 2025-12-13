@@ -28,3 +28,5 @@ data:
   ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:3001"
   BACKEND_URL: "https://api.viridial.com"
   FRONTEND_URL: "https://app.viridial.com"
+  EMAIL_DOMAIN: "viridial.com"
+  EMAIL_FROM: "no-reply@viridial.com"
