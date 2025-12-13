@@ -1,8 +1,16 @@
-import en from './locales/en.json'
-import fr from './locales/fr.json'
-import es from './locales/es.json'
-import de from './locales/de.json'
-import ar from './locales/ar.json'
+import fs from 'fs'
+
+function loadJson(path: string): Record<string, string> {
+  const url = new URL(path, import.meta.url)
+  const content = fs.readFileSync(url, 'utf8')
+  return JSON.parse(content) as Record<string, string>
+}
+
+const en = loadJson('./locales/en.json')
+const fr = loadJson('./locales/fr.json')
+const es = loadJson('./locales/es.json')
+const de = loadJson('./locales/de.json')
+const ar = loadJson('./locales/ar.json')
 
 interface Translations {
   [key: string]: {
