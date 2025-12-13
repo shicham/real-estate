@@ -1,5 +1,4 @@
 import bcrypt from 'bcryptjs'
-import logger from '../lib/logger.js'
 import { User } from '../models/User.js'
 import { Role } from '../models/Role.js'
 import { Profile } from '../models/Profile.js'
@@ -19,7 +18,6 @@ export class AuthService {
         roleCodes?: string[],
         profileCodes?: string[]
     ) {
-        logger.info('Signup attempt for email:', email)
         const existing = await User.findOne({ email }).exec()
         if (existing) throw new AppError('User already exists', 400)
 
