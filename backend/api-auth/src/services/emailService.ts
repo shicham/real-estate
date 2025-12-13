@@ -1,3 +1,5 @@
+import dotenv from 'dotenv'
+dotenv.config()
 import nodemailer, { Transporter, SentMessageInfo } from 'nodemailer'
 import logger from '../lib/logger.js'
 
@@ -27,7 +29,12 @@ class EmailService {
   // Vérifie la connexion SMTP
   private async verifyConnection(): Promise<void> {
     try {
+
       await this.transporter.verify!() // nodemailer TS issue, on assure que verify existe
+      logger.info(`verifyConnection SMTP_PORT ${ process.env.SMTP_PORT}`)
+      logger.info(`verifyConnection SMTP_HOST ${ process.env.SMTP_HOST}`)
+      logger.info(`verifyConnection SMTP_USER ${ process.env.SMTP_USER}`)
+
       logger.info('📧 SMTP server connection verified')
     } catch (error) {
       logger.error('SMTP server connection failed:', error)
@@ -43,15 +50,13 @@ class EmailService {
   ): Promise<SentMessageInfo> {
     try {
       const mailOptions = {
-        from: process.env.FROM_EMAIL || 'noreply@realestate.com',
+        from: process.env.FROM_NAME || 'noreply@realestate.com',
         to,
         subject,
         html,
         text
       }
-
       const info = await this.transporter.sendMail(mailOptions) as SentMessageInfo
-      logger.info(`Email sent successfully to ${to}:`, info.messageId)
       return info
     } catch (error) {
       logger.error(`Failed to send email to ${to}:`, error)
@@ -62,9 +67,7 @@ class EmailService {
   // Email de vérification d'adresse
   async sendVerificationEmail(email: string, token: string, displayName?: string) {
 
-    console.log('SMTP_PORT', process.env.SMTP_PORT)
-    console.log('SMTP_HOST', process.env.SMTP_HOST)
-    console.log('SMTP_USER', process.env.SMTP_USER)
+
     const verificationUrl =
       `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email/${token}`
 
