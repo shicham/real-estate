@@ -27,6 +27,18 @@ export const changePasswordSchema = z.object({
     .regex(/\d/, { message: 'Password must contain numbers' })
 })
 
+export const requestPasswordResetSchema = z.object({
+  email: z.string().email({ message: 'Invalid email address' })
+})
+
+export const resetPasswordSchema = z.object({
+  token: z.string().min(1, { message: 'Token is required' }),
+  newPassword: z.string()
+    .min(8, { message: 'Password must be at least 8 characters' })
+    .regex(/[A-Za-z]/, { message: 'Password must contain letters' })
+    .regex(/\d/, { message: 'Password must contain numbers' })
+})
+
 export function formatZodErrors(err: z.ZodError) {
   return err.errors.map(e => ({ path: e.path.join('.'), message: e.message }))
 }

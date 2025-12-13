@@ -227,6 +227,48 @@ export class AuthService {
 
         return { ok: true, message: 'Password changed successfully' }
     }
+
+    async requestPasswordReset(email: string) {
+        const user = await User.findOne({ email }).exec()
+        if (!user) {
+            // Don't reveal if email exists or not for security
+            return { ok: true, message: 'If the email exists, a password reset link has been sent' }
+        }
+
+        const resetToken = tokenService.generatePasswordResetToken(user._id.toString(), user.email)
+        // Send password reset email (best effort)
+        try {
+            await emailService.sendPasswordResetEmail(user.email, resetToken)
+        } catch (err) {
+            // don't block if email sending fails
+        }
+
+        return { ok: true, message: 'If the email exists, a password reset link has been sent' }
+    }
+
+    async resetPassword(token: string, newPassword: string) {
+        const payload = tokenService.validatePasswordResetToken(token) as any
+        const userId = payload?.sub
+        if (!userId) throw new AppError('Invalid token payload', 400)
+
+        const user = await User.findById(userId).exec()
+        if (!user) throw new AppError('User not found', 404)
+
+        // Hash new password
+        const newPasswordHash = await bcrypt.hash(newPassword, 10)
+
+        // Update user password
+        await User.findByIdAndUpdate(userId, { passwordHash: newPasswordHash }).exec()
+
+        // Send notification email (best effort)
+        try {
+            await emailService.sendPasswordChangeEmail(user.email, `${user.firstName || ''} ${user.lastName || ''}`.trim())
+        } catch (err) {
+            // don't fail if email sending fails
+        }
+
+        return { ok: true, message: 'Password reset successfully' }
+    }
 }
 
 const authService = new AuthService()

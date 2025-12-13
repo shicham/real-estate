@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import authService from '../services/authService.js'
-import { signupSchema, signinSchema, changePasswordSchema, formatZodErrors } from '../lib/validation.js'
+import { signupSchema, signinSchema, changePasswordSchema, requestPasswordResetSchema, resetPasswordSchema, formatZodErrors } from '../lib/validation.js'
 
 export class AuthController {
   public router = Router()
@@ -12,6 +12,8 @@ export class AuthController {
     this.router.post('/logout', this.logout.bind(this))
     this.router.post('/change-password', this.changePassword.bind(this))
     this.router.get('/verify-email', this.verifyEmail.bind(this))
+    this.router.post('/request-password-reset', this.requestPasswordReset.bind(this))
+    this.router.post('/reset-password', this.resetPassword.bind(this))
   }
 
   async signup(req: Request, res: Response, next: NextFunction) {
@@ -85,6 +87,32 @@ export class AuthController {
       const token = (req.query.token as string) || req.body?.token
       if (!token) return res.status(400).json({ error: 'token required' })
       const result = await authService.verifyEmail(token)
+      res.json(result)
+    } catch (err: any) {
+      next(err)
+    }
+  }
+
+  async requestPasswordReset(req: Request, res: Response, next: NextFunction) {
+    try {
+      const parsed = requestPasswordResetSchema.safeParse(req.body)
+      if (!parsed.success) return res.status(400).json({ errors: formatZodErrors(parsed.error) })
+
+      const { email } = parsed.data
+      const result = await authService.requestPasswordReset(email)
+      res.json(result)
+    } catch (err: any) {
+      next(err)
+    }
+  }
+
+  async resetPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const parsed = resetPasswordSchema.safeParse(req.body)
+      if (!parsed.success) return res.status(400).json({ errors: formatZodErrors(parsed.error) })
+
+      const { token, newPassword } = parsed.data
+      const result = await authService.resetPassword(token, newPassword)
       res.json(result)
     } catch (err: any) {
       next(err)

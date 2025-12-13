@@ -24,6 +24,10 @@ class TokenService {
     readonly emailSecret = process.env.JWT_EMAIL_SECRET || 'change-this-email-secret'
     readonly emailExpires = process.env.JWT_EMAIL_EXPIRES || '1d'
 
+    // password reset secret and expiry
+    readonly passwordResetSecret = process.env.JWT_PASSWORD_RESET_SECRET || 'change-this-password-reset-secret'
+    readonly passwordResetExpires = process.env.JWT_PASSWORD_RESET_EXPIRES || '10m'
+
     private parseExpiryToSeconds(value: string): number {
         if (!value) return 0
         const m = value.match(/^(\d+)([smhd])$/)
@@ -183,6 +187,19 @@ class TokenService {
             return payload
         } catch (err) {
             throw new AppError('Invalid or expired email verification token', 401)
+        }
+    }
+
+    generatePasswordResetToken(userId: string, email?: string) {
+        return this.createJwt({ sub: userId, email }, this.passwordResetSecret, this.passwordResetExpires)
+    }
+
+    validatePasswordResetToken(token: string) {
+        try {
+            const payload = jwt.verify(token, this.passwordResetSecret) as any
+            return payload
+        } catch (err) {
+            throw new AppError('Invalid or expired password reset token', 401)
         }
     }
 }
