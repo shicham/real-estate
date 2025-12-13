@@ -1,0 +1,15 @@
+{
+  "passwordResetSubject": "Restablece tu contraseña",
+  "passwordResetGreeting": "Hola",
+  "passwordResetBody": "Has solicitado restablecer tu contraseña. Haz clic en el enlace a continuación para restablecer tu contraseña:",
+  "passwordResetButton": "Restablecer contraseña",
+  "passwordResetLinkText": "O copia y pega este enlace en tu navegador:",
+  "passwordResetExpiry": "Este enlace expirará en 10 minutos por razones de seguridad.",
+  "passwordResetIgnore": "Si no has solicitado este restablecimiento de contraseña, ignora este correo electrónico.",
+  "passwordChangeSubject": "Contraseña cambiada exitosamente",
+  "passwordChangeGreeting": "Hola",
+  "passwordChangeBody": "Tu contraseña ha sido cambiada exitosamente. Si no has realizado este cambio, contacta al soporte inmediatamente.",
+  "passwordChangeLoginText": "Puedes iniciar sesión con tu nueva contraseña aquí:",
+  "passwordChangeSecurity": "Por razones de seguridad, recomendamos no compartir tu contraseña con nadie.",
+  "footerText": "© 2025 Plataforma Inmobiliaria. Todos los derechos reservados."
+}

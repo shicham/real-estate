@@ -1,0 +1,15 @@
+{
+  "passwordResetSubject": "Réinitialisez votre mot de passe",
+  "passwordResetGreeting": "Bonjour",
+  "passwordResetBody": "Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe :",
+  "passwordResetButton": "Réinitialiser le mot de passe",
+  "passwordResetLinkText": "Ou copiez et collez ce lien dans votre navigateur :",
+  "passwordResetExpiry": "Ce lien expirera dans 10 minutes pour des raisons de sécurité.",
+  "passwordResetIgnore": "Si vous n'avez pas demandé cette réinitialisation de mot de passe, veuillez ignorer cet e-mail.",
+  "passwordChangeSubject": "Mot de passe changé avec succès",
+  "passwordChangeGreeting": "Bonjour",
+  "passwordChangeBody": "Votre mot de passe a été changé avec succès. Si vous n'avez pas effectué ce changement, veuillez contacter le support immédiatement.",
+  "passwordChangeLoginText": "Vous pouvez vous connecter avec votre nouveau mot de passe ici :",
+  "passwordChangeSecurity": "Pour des raisons de sécurité, nous vous recommandons de ne partager votre mot de passe avec personne.",
+  "footerText": "© 2025 Plateforme Immobilière. Tous droits réservés."
+}
