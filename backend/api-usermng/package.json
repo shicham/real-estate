@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "tsc && npm run copy-locales",
+    "copy-locales": "cp -R src/lib/locales dist/lib/locales",
     "start": "node dist/index.js",
     "test": "jest --runInBand",
     "test:watch": "jest --watch"
