@@ -1,4 +1,4 @@
-name: CI - Userng
+name: CI - api-usermng
 
 on:
   push:
