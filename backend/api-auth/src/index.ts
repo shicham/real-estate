@@ -7,6 +7,10 @@ import { connectMongo } from './lib/mongo.js'
 import { connectRedis } from './lib/redis.js'
 import app from './app.js'
 
+console.log('SMTP_PORT',process.env.SMTP_PORT)
+console.log('SMTP_HOST',process.env.SMTP_HOST)
+console.log('SMTP_USER',process.env.SMTP_USER)
+
 async function start() {
   const PORT = process.env.PORT || 3001
   const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI || 'mongodb://localhost:27017/real_estate_auth'

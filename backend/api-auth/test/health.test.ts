@@ -2,7 +2,8 @@
  * Tests d'exemple (style class) pour /health et /
  * Mocke les modules redis et mongo avant d'importer l'app pour éviter I/O pendant l'import.
  */
-
+import dotenv from 'dotenv'
+dotenv.config()
 jest.mock('../src/lib/redis', () => {
   const fakeRedis = {
     set: jest.fn().mockResolvedValue('OK'),

@@ -61,6 +61,10 @@ class EmailService {
 
   // Email de vérification d'adresse
   async sendVerificationEmail(email: string, token: string, displayName?: string) {
+
+    console.log('SMTP_PORT', process.env.SMTP_PORT)
+    console.log('SMTP_HOST', process.env.SMTP_HOST)
+    console.log('SMTP_USER', process.env.SMTP_USER)
     const verificationUrl =
       `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email/${token}`
 
