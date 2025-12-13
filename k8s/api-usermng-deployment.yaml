@@ -29,7 +29,7 @@ spec:
       volumes:
         - name: vps-logs
           hostPath:
-            path: /var/log/realestate
+            path: /var/log/api-usermng
             type: DirectoryOrCreate
       containers:
         - name: api-usermng
@@ -44,7 +44,7 @@ spec:
                 name: api-usermng-config
           env:
             - name: LOG_PATH
-              value: /var/log/realestate
+              value: /var/log/api-usermng
             - name: MONGODB_URI
               valueFrom:
                 secretKeyRef:
@@ -60,6 +60,11 @@ spec:
                 secretKeyRef:
                   name: api-usermng-secrets
                   key: jwt-refresh-secret
+            - name: SMTP_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: api-usermng-secrets
+                  key: smtp-password
             - name: REDIS_HOST
               valueFrom:
                 secretKeyRef:
@@ -94,7 +99,7 @@ spec:
               memory: "512Mi"
           volumeMounts:
             - name: vps-logs
-              mountPath: /var/log/realestate
+              mountPath: /var/log/api-usermng
           livenessProbe:
             httpGet:
               path: /health
