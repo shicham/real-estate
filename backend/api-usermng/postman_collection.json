@@ -9,6 +9,11 @@
       "key": "baseUrl",
       "value": "http://localhost:3002",
       "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "your-jwt-token-here",
+      "type": "string"
     }
   ],
   "item": [
@@ -19,7 +24,13 @@
           "name": "Get Health Status",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/health",
               "host": ["{{baseUrl}}"],
@@ -36,7 +47,13 @@
           "name": "Get All Users",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/users",
               "host": ["{{baseUrl}}"],
@@ -48,7 +65,13 @@
           "name": "Get User by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/users/:id",
               "host": ["{{baseUrl}}"],
@@ -114,7 +137,13 @@
           "name": "Delete User",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/users/:id",
               "host": ["{{baseUrl}}"],
@@ -245,7 +274,13 @@
           "name": "Get All Groups",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/groups",
               "host": ["{{baseUrl}}"],
@@ -257,7 +292,13 @@
           "name": "Get Group by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/groups/:id",
               "host": ["{{baseUrl}}"],
@@ -275,7 +316,13 @@
           "name": "Get Group by Code",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/groups/code/:code",
               "host": ["{{baseUrl}}"],
@@ -341,7 +388,13 @@
           "name": "Delete Group",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/groups/:id",
               "host": ["{{baseUrl}}"],
@@ -418,7 +471,13 @@
           "name": "Get All Roles",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/roles",
               "host": ["{{baseUrl}}"],
@@ -430,7 +489,13 @@
           "name": "Get Role by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/roles/:id",
               "host": ["{{baseUrl}}"],
@@ -448,7 +513,13 @@
           "name": "Get Role by Code",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/roles/code/:code",
               "host": ["{{baseUrl}}"],
@@ -514,7 +585,13 @@
           "name": "Delete Role",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/roles/:id",
               "host": ["{{baseUrl}}"],
@@ -537,7 +614,13 @@
           "name": "Get All Profiles",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/profiles",
               "host": ["{{baseUrl}}"],
@@ -549,7 +632,13 @@
           "name": "Get Profile by ID",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/profiles/:id",
               "host": ["{{baseUrl}}"],
@@ -567,7 +656,13 @@
           "name": "Get Profile by Code",
           "request": {
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/profiles/code/:code",
               "host": ["{{baseUrl}}"],
@@ -633,7 +728,13 @@
           "name": "Delete Profile",
           "request": {
             "method": "DELETE",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
             "url": {
               "raw": "{{baseUrl}}/api/profiles/:id",
               "host": ["{{baseUrl}}"],

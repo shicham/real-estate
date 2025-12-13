@@ -5,6 +5,7 @@ import compression from 'compression'
 import morgan from 'morgan'
 import { connectMongo } from './lib/db.js'
 import errorHandler from './middleware/errorHandler.js'
+import { authenticateToken, requireAdmin } from './middleware/auth.js'
 
 // Import controllers
 import userController from './controllers/userController.js'
@@ -30,11 +31,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'api-usermng', timestamp: new Date().toISOString() })
 })
 
-// API Routes
-app.use('/api/users', userController)
-app.use('/api/roles', roleController)
-app.use('/api/profiles', profileController)
-app.use('/api/groups', groupController)
+// API Routes (all protected with authentication)
+app.use('/api/users', authenticateToken, userController)
+app.use('/api/roles', authenticateToken, requireAdmin, roleController)
+app.use('/api/profiles', authenticateToken, requireAdmin, profileController)
+app.use('/api/groups', authenticateToken, groupController)
 
 // Error handling middleware (must be last)
 app.use(errorHandler)

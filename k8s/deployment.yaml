@@ -127,3 +127,128 @@ spec:
               drop:
                 - ALL
             readOnlyRootFilesystem: false
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-usermng
+  namespace: realestate
+  labels:
+    app: api-usermng
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api-usermng
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        app: api-usermng
+        # version label will be set by workflow via kubectl set image (optional)
+        version: "latest"
+    spec:
+      automountServiceAccountToken: false
+      serviceAccountName: default
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: vps-logs
+          hostPath:
+            path: /var/log/realestate
+            type: DirectoryOrCreate
+      containers:
+        - name: api-usermng
+          image: docker.io/hsassa/api-usermng:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3002
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: api-usermng-config
+          env:
+            - name: LOG_PATH
+              value: /var/log/realestate
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: api-usermng-secrets
+                  key: mongodb-uri
+            - name: JWT_ACCESS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: api-usermng-secrets
+                  key: jwt-access-secret
+            - name: JWT_REFRESH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: api-usermng-secrets
+                  key: jwt-refresh-secret
+            - name: REDIS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: api-usermng-secrets
+                  key: redis-host
+            - name: REDIS_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: api-usermng-secrets
+                  key: redis-port
+            - name: REDIS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: api-usermng-secrets
+                  key: redis-username
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: api-usermng-secrets
+                  key: redis-password
+            - name: REDIS_DB
+              valueFrom:
+                secretKeyRef:
+                  name: api-usermng-secrets
+                  key: redis-db
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: vps-logs
+              mountPath: /var/log/realestate
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3002
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 5
+            failureThreshold: 3
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: false

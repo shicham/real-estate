@@ -1,0 +1,107 @@
+name: CI - api-usermng
+on:
+  push:
+    paths:
+      - 'backend/api-usermng/**'
+      - '.github/workflows/api-usermng-ci.yml'
+  pull_request:
+    paths:
+      - 'backend/api-usermng/**'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test and Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        working-directory: backend/api-usermng
+        run: npm ci
+
+      - name: Run tests
+        working-directory: backend/api-usermng
+        run: npm test
+
+      - name: Build
+        working-directory: backend/api-usermng
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-usermng-dist-${{ matrix.node-version }}-${{ github.run_id }}
+          path: backend/api-usermng/dist
+
+  release_and_publish:
+    name: Release & Publish Docker Image
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Configure git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version (patch) and push tag
+        working-directory: backend/api-usermng
+        if: ${{ github.actor != 'github-actions[bot]' }}
+        run: |
+          # bump package.json version (npm will update package.json and create a git tag)
+          npm version patch -m "chore(release): %s [ci skip]"
+          # push commit and tag to origin/main
+          git push origin HEAD:main
+          git push origin --tags
+          # write the new version to GITHUB_ENV so subsequent steps can read it
+          node -e "const fs=require('fs'); const v=require('./package.json').version; fs.appendFileSync(process.env.GITHUB_ENV, 'VERSION='+v+'\\n')"
+
+      - name: (fallback) ensure VERSION is set if bump skipped
+        working-directory: backend/api-usermng
+        if: ${{ github.actor == 'github-actions[bot]' }}
+        run: |
+          node -e "const fs=require('fs'); const v=require('./package.json').version; fs.appendFileSync(process.env.GITHUB_ENV, 'VERSION='+v+'\\n')"
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend/api-usermng
+          file: ./backend/api-usermng/Dockerfile
+          push: true
+          tags: |
+            docker.io/hsassa/api-usermng:${{ env.VERSION }}
+            docker.io/hsassa/api-usermng:latest
