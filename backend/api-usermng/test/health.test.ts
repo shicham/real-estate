@@ -62,3 +62,4 @@ describe('api-usermng - basic endpoints (class style)', () => {
     await suite.checkRoot()
   })
 })
+
