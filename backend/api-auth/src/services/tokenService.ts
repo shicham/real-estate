@@ -53,36 +53,35 @@ class TokenService {
         const token = jwt.sign(payload as jwt.JwtPayload | string, secret, opts)
         return token
     }
-      private createJwt(payload: object, secret: jwt.Secret, expiresIn?: string | number) {
-    try {
-      if (!secret || (typeof secret === 'string' && secret.trim() === '')) {
-        const msg = 'JWT secret is empty or undefined'
-        logger.error(msg, { payload, expiresIn })
-        throw new Error(msg)
-      }
+    private createJwt(payload: object, secret: jwt.Secret, expiresIn?: string | number) {
+        try {
+            if (!secret || (typeof secret === 'string' && secret.trim() === '')) {
+                const msg = 'JWT secret is empty or undefined'
+                logger.error(msg, { payload, expiresIn })
+                throw new Error(msg)
+            }
 
-      const opts: jwt.SignOptions = {}
-      if (expiresIn) opts.expiresIn = expiresIn
+             const opts = { expiresIn } as unknown as jwt.SignOptions
 
-      // Si le secret est une string, on force l'algorithme HMAC par défaut (HS256) pour éviter ambiguïtés
-      if (typeof secret === 'string') {
-        opts.algorithm = opts.algorithm || 'HS256'
-      }
+            // Si le secret est une string, on force l'algorithme HMAC par défaut (HS256) pour éviter ambiguïtés
+            if (typeof secret === 'string') {
+                opts.algorithm = opts.algorithm || 'HS256'
+            }
 
-      const token = jwt.sign(payload as jwt.JwtPayload | string, secret as jwt.Secret, opts)
+            const token = jwt.sign(payload as jwt.JwtPayload | string, secret as jwt.Secret, opts)
 
-      if (!token || typeof token !== 'string') {
-        const msg = 'jwt.sign did not return a token'
-        logger.error(msg, { payload, expiresIn })
-        throw new Error(msg)
-      }
+            if (!token || typeof token !== 'string') {
+                const msg = 'jwt.sign did not return a token'
+                logger.error(msg, { payload, expiresIn })
+                throw new Error(msg)
+            }
 
-      return token
-    } catch (err) {
-      logger.error('Failed to sign JWT', err)
-      throw err
+            return token
+        } catch (err) {
+            logger.error('Failed to sign JWT', err)
+            throw err
+        }
     }
-  }
     private async ensureRedis() {
         try {
             const redis = getRedis()
