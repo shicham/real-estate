@@ -1,0 +1,15 @@
+{
+  "passwordResetSubject": "Passwort zurücksetzen",
+  "passwordResetGreeting": "Hallo",
+  "passwordResetBody": "Sie haben angefordert, Ihr Passwort zurückzusetzen. Klicken Sie auf den unten stehenden Link, um Ihr Passwort zurückzusetzen:",
+  "passwordResetButton": "Passwort zurücksetzen",
+  "passwordResetLinkText": "Oder kopieren Sie diesen Link in Ihren Browser:",
+  "passwordResetExpiry": "Dieser Link läuft aus Sicherheitsgründen in 10 Minuten ab.",
+  "passwordResetIgnore": "Wenn Sie diese Passwortzurücksetzung nicht angefordert haben, ignorieren Sie bitte diese E-Mail.",
+  "passwordChangeSubject": "Passwort erfolgreich geändert",
+  "passwordChangeGreeting": "Hallo",
+  "passwordChangeBody": "Ihr Passwort wurde erfolgreich geändert. Wenn Sie diese Änderung nicht vorgenommen haben, wenden Sie sich bitte sofort an den Support.",
+  "passwordChangeLoginText": "Sie können sich hier mit Ihrem neuen Passwort anmelden:",
+  "passwordChangeSecurity": "Aus Sicherheitsgründen empfehlen wir, Ihr Passwort nicht mit anderen zu teilen.",
+  "footerText": "© 2025 Immobilienplattform. Alle Rechte vorbehalten."
+}

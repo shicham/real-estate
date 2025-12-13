@@ -1,0 +1,15 @@
+{
+  "passwordResetSubject": "إعادة تعيين كلمة المرور",
+  "passwordResetGreeting": "مرحباً",
+  "passwordResetBody": "لقد طلبت إعادة تعيين كلمة المرور الخاصة بك. انقر على الرابط أدناه لإعادة تعيين كلمة المرور:",
+  "passwordResetButton": "إعادة تعيين كلمة المرور",
+  "passwordResetLinkText": "أو انسخ والصق هذا الرابط في متصفحك:",
+  "passwordResetExpiry": "سينتهي هذا الرابط خلال 10 دقائق لأسباب أمنية.",
+  "passwordResetIgnore": "إذا لم تطلب إعادة تعيين كلمة المرور هذه، يرجى تجاهل هذا البريد الإلكتروني.",
+  "passwordChangeSubject": "تم تغيير كلمة المرور بنجاح",
+  "passwordChangeGreeting": "مرحباً",
+  "passwordChangeBody": "تم تغيير كلمة المرور الخاصة بك بنجاح. إذا لم تقم بهذا التغيير، يرجى الاتصال بالدعم فوراً.",
+  "passwordChangeLoginText": "يمكنك تسجيل الدخول بكلمة المرور الجديدة هنا:",
+  "passwordChangeSecurity": "لأسباب أمنية، ننصح بعدم مشاركة كلمة المرور مع أي شخص.",
+  "footerText": "© 2025 منصة العقارات. جميع الحقوق محفوظة."
+}

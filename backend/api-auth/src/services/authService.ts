@@ -220,7 +220,11 @@ export class AuthService {
 
         // Send notification email (best effort)
         try {
-            await emailService.sendPasswordChangeEmail(user.email, `${user.firstName || ''} ${user.lastName || ''}`.trim())
+            await emailService.sendPasswordChangeEmail(
+                user.email,
+                `${user.firstName || ''} ${user.lastName || ''}`.trim(),
+                user.preferredLanguage || 'en'
+            )
         } catch (err) {
             // don't fail if email sending fails
         }
@@ -238,7 +242,7 @@ export class AuthService {
         const resetToken = tokenService.generatePasswordResetToken(user._id.toString(), user.email)
         // Send password reset email (best effort)
         try {
-            await emailService.sendPasswordResetEmail(user.email, resetToken)
+            await emailService.sendPasswordResetEmail(user.email, resetToken, user.preferredLanguage || 'en')
         } catch (err) {
             // don't block if email sending fails
         }

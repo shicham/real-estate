@@ -3,6 +3,7 @@ dotenv.config()
 import nodemailer, { Transporter, SentMessageInfo } from 'nodemailer'
 import logger from '../lib/logger.js'
 import { log } from 'winston'
+import { t } from '../lib/i18n.js'
 
 interface SendEmailOptions {
   to: string
@@ -128,22 +129,67 @@ class EmailService {
   }
 
   // Email de réinitialisation de mot de passe
-  async sendPasswordResetEmail(email: string, token: string) {
+  async sendPasswordResetEmail(email: string, token: string, language: string = 'en') {
     const resetUrl =
       `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password/${token}`
 
-    const html = `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><title>Reset Password</title></head>
-<body>
-  <h2>Password Reset</h2>
-  <a href="${resetUrl}">${resetUrl}</a>
-</body>
-</html>`
+    const isRTL = language === 'ar'
+    const textAlign = isRTL ? 'right' : 'left'
+    const direction = isRTL ? 'rtl' : 'ltr'
 
-    const text = `Reset your password:\n\n${resetUrl}\n\nThis link expires in 10 minutes.`
+    const html = `
+      <!DOCTYPE html>
+      <html dir="${direction}" lang="${language}">
+      <head>
+        <meta charset="utf-8">
+        <title>${t('passwordResetSubject', language)}</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; direction: ${direction}; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; text-align: ${textAlign}; }
+          .header { background: #007bff; color: white; padding: 20px; text-align: center; }
+          .content { padding: 20px; background: #f9f9f9; text-align: ${textAlign}; }
+          .button { display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 20px 0; }
+          .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; }
+          .url-link { word-break: break-all; text-align: ${textAlign}; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🏠 Real Estate Platform</h1>
+          </div>
+          <div class="content">
+            <h2>${t('passwordResetSubject', language)}</h2>
+            <p>${t('passwordResetBody', language)}</p>
+            <div style="text-align: center;">
+              <a href="${resetUrl}" class="button">${t('passwordResetButton', language)}</a>
+            </div>
+            <p>${t('passwordResetLinkText', language)}</p>
+            <p class="url-link"><a href="${resetUrl}">${resetUrl}</a></p>
+            <p>${t('passwordResetExpiry', language)}</p>
+            <p>${t('passwordResetIgnore', language)}</p>
+          </div>
+          <div class="footer">
+            <p>${t('footerText', language)}</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `
 
-    return this.sendEmail(email, 'Reset Your Password', html, text)
+    const text = `
+      ${t('passwordResetSubject', language)}
+
+      ${t('passwordResetBody', language)}
+
+      ${resetUrl}
+
+      ${t('passwordResetExpiry', language)}
+
+      ${t('passwordResetIgnore', language)}
+    `
+
+    return this.sendEmail(email, t('passwordResetSubject', language), html, text)
   }
 
   // Email de bienvenue
@@ -167,33 +213,60 @@ class EmailService {
   }
 
   // Email de changement de mot de passe
-  async sendPasswordChangeEmail(email: string, displayName?: string) {
+  async sendPasswordChangeEmail(email: string, displayName?: string, language: string = 'en') {
     const loginUrl =
       `${process.env.FRONTEND_URL || 'http://localhost:3000'}/login`
 
+    const isRTL = language === 'ar'
+    const textAlign = isRTL ? 'right' : 'left'
+    const direction = isRTL ? 'rtl' : 'ltr'
+
     const html = `<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><title>Password Changed</title></head>
+<html dir="${direction}" lang="${language}">
+<head>
+  <meta charset="utf-8">
+  <title>${t('passwordChangeSubject', language)}</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; direction: ${direction}; }
+    .container { max-width: 600px; margin: 0 auto; padding: 20px; text-align: ${textAlign}; }
+    .header { background: #007bff; color: white; padding: 20px; text-align: center; }
+    .content { padding: 20px; background: #f9f9f9; text-align: ${textAlign}; }
+    .button { display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 20px 0; }
+    .footer { padding: 20px; text-align: center; font-size: 12px; color: #666; }
+    .url-link { word-break: break-all; text-align: ${textAlign}; }
+  </style>
+</head>
 <body>
-  <h2>Password Changed Successfully</h2>
-  <p>Hello ${displayName || 'User'},</p>
-  <p>Your password has been successfully changed. If you did not make this change, please contact support immediately.</p>
-  <p>You can login with your new password here: <a href="${loginUrl}">${loginUrl}</a></p>
-  <p>For security reasons, we recommend not sharing your password with anyone.</p>
+  <div class="container">
+    <div class="header">
+      <h1>🏠 Real Estate Platform</h1>
+    </div>
+    <div class="content">
+      <h2>${t('passwordChangeSubject', language)}</h2>
+      <p>${t('passwordChangeGreeting', language)} ${displayName || 'User'},</p>
+      <p>${t('passwordChangeBody', language)}</p>
+      <p>${t('passwordChangeLoginText', language)}</p>
+      <p class="url-link"><a href="${loginUrl}">${loginUrl}</a></p>
+      <p>${t('passwordChangeSecurity', language)}</p>
+    </div>
+    <div class="footer">
+      <p>${t('footerText', language)}</p>
+    </div>
+  </div>
 </body>
 </html>`
 
-    const text = `Password Changed Successfully
+    const text = `${t('passwordChangeSubject', language)}
 
-Hello ${displayName || 'User'},
+${t('passwordChangeGreeting', language)} ${displayName || 'User'},
 
-Your password has been successfully changed. If you did not make this change, please contact support immediately.
+${t('passwordChangeBody', language)}
 
-You can login with your new password here: ${loginUrl}
+${t('passwordChangeLoginText', language)} ${loginUrl}
 
-For security reasons, we recommend not sharing your password with anyone.`
+${t('passwordChangeSecurity', language)}`
 
-    return this.sendEmail(email, 'Password Changed Successfully', html, text)
+    return this.sendEmail(email, t('passwordChangeSubject', language), html, text)
   }
 }
 
