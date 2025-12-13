@@ -203,6 +203,30 @@ export class AuthService {
         if (!user) throw new AppError('User not found', 404)
         return { ok: true, id: user._id.toString(), email: user.email, isEmailVerified: user.isEmailVerified }
     }
+
+    async changePassword(userId: string, currentPassword: string, newPassword: string) {
+        const user = await User.findById(userId).exec()
+        if (!user) throw new AppError('User not found', 404)
+
+        // Verify current password
+        const match = await bcrypt.compare(currentPassword, user.passwordHash)
+        if (!match) throw new AppError('Current password is incorrect', 400)
+
+        // Hash new password
+        const newPasswordHash = await bcrypt.hash(newPassword, 10)
+
+        // Update user
+        await User.findByIdAndUpdate(userId, { passwordHash: newPasswordHash }).exec()
+
+        // Send notification email (best effort)
+        try {
+            await emailService.sendPasswordChangeEmail(user.email, `${user.firstName || ''} ${user.lastName || ''}`.trim())
+        } catch (err) {
+            // don't fail if email sending fails
+        }
+
+        return { ok: true, message: 'Password changed successfully' }
+    }
 }
 
 const authService = new AuthService()

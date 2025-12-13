@@ -165,6 +165,36 @@ class EmailService {
 
     return this.sendEmail(email, 'Welcome to Real Estate Platform!', html, text)
   }
+
+  // Email de changement de mot de passe
+  async sendPasswordChangeEmail(email: string, displayName?: string) {
+    const loginUrl =
+      `${process.env.FRONTEND_URL || 'http://localhost:3000'}/login`
+
+    const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Password Changed</title></head>
+<body>
+  <h2>Password Changed Successfully</h2>
+  <p>Hello ${displayName || 'User'},</p>
+  <p>Your password has been successfully changed. If you did not make this change, please contact support immediately.</p>
+  <p>You can login with your new password here: <a href="${loginUrl}">${loginUrl}</a></p>
+  <p>For security reasons, we recommend not sharing your password with anyone.</p>
+</body>
+</html>`
+
+    const text = `Password Changed Successfully
+
+Hello ${displayName || 'User'},
+
+Your password has been successfully changed. If you did not make this change, please contact support immediately.
+
+You can login with your new password here: ${loginUrl}
+
+For security reasons, we recommend not sharing your password with anyone.`
+
+    return this.sendEmail(email, 'Password Changed Successfully', html, text)
+  }
 }
 
 // Création du singleton

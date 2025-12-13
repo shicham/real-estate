@@ -35,9 +35,9 @@ describe('EmailService', () => {
     const subject = 'Test email'
     const html = '<p>Ceci est un test</p>'
     const text = 'Ceci est un test'
-console.log('SMTP_PORT',process.env.SMTP_PORT)
-console.log('SMTP_HOST',process.env.SMTP_HOST)
-console.log('SMTP_USER',process.env.SMTP_USER)
+    console.log('SMTP_PORT', process.env.SMTP_PORT)
+    console.log('SMTP_HOST', process.env.SMTP_HOST)
+    console.log('SMTP_USER', process.env.SMTP_USER)
     const info = await emailService.sendEmail(to, subject, html, text)
 
     // sendMail doit avoir été appelé une fois

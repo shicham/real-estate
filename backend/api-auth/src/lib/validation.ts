@@ -19,6 +19,14 @@ export const signinSchema = z.object({
   password: z.string().min(1, { message: 'Password is required' })
 })
 
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, { message: 'Current password is required' }),
+  newPassword: z.string()
+    .min(8, { message: 'Password must be at least 8 characters' })
+    .regex(/[A-Za-z]/, { message: 'Password must contain letters' })
+    .regex(/\d/, { message: 'Password must contain numbers' })
+})
+
 export function formatZodErrors(err: z.ZodError) {
   return err.errors.map(e => ({ path: e.path.join('.'), message: e.message }))
 }

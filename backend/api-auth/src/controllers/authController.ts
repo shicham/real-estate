@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import authService from '../services/authService.js'
-import { signupSchema, signinSchema, formatZodErrors } from '../lib/validation.js'
+import { signupSchema, signinSchema, changePasswordSchema, formatZodErrors } from '../lib/validation.js'
 
 export class AuthController {
   public router = Router()
@@ -10,6 +10,7 @@ export class AuthController {
     this.router.post('/signin', this.signin.bind(this))
     this.router.post('/refresh', this.refresh.bind(this))
     this.router.post('/logout', this.logout.bind(this))
+    this.router.post('/change-password', this.changePassword.bind(this))
     this.router.get('/verify-email', this.verifyEmail.bind(this))
   }
 
@@ -59,6 +60,21 @@ export class AuthController {
       if (!refreshToken) return res.status(400).json({ error: 'refreshToken required' })
       await authService.logout(refreshToken)
       res.status(204).send()
+    } catch (err: any) {
+      next(err)
+    }
+  }
+
+  async changePassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const parsed = changePasswordSchema.safeParse(req.body)
+      if (!parsed.success) return res.status(400).json({ errors: formatZodErrors(parsed.error) })
+
+      const { userId, currentPassword, newPassword } = req.body
+      if (!userId) return res.status(400).json({ error: 'userId required' })
+
+      const result = await authService.changePassword(userId, currentPassword, newPassword)
+      res.json(result)
     } catch (err: any) {
       next(err)
     }
