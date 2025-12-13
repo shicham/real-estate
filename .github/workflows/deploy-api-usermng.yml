@@ -103,8 +103,8 @@ jobs:
           else
             echo "Deployment api-usermng not found — applying k8s manifests from k8s/"
             kubectl apply -f k8s/namespace.yaml
-            kubectl apply -f k8s/configmap.yaml || true
-            kubectl apply -f k8s/service.yaml || true
+            kubectl apply -f k8s/api-usermng-config.yaml || true
+            kubectl apply -f k8s/api-usermng-service.yaml || true
 
             # Check secret presence (the secret should be created beforehand or via a secure step)
             if ! kubectl -n realestate get secret api-usermng-secrets >/dev/null 2>&1; then
@@ -113,7 +113,7 @@ jobs:
               exit 1
             fi
 
-            kubectl apply -f k8s/deployment.yaml
+            kubectl apply -f k8s/api-usermng-deployment.yaml
             echo "Manifests applied"
           fi
 
