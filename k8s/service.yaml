@@ -14,20 +14,3 @@ spec:
       port: 3001
       targetPort: 3001
       protocol: TCP
----
-apiVersion: v1
-kind: Service
-metadata:
- name: api-usermng
- namespace: realestate
- labels:
-   app: api-usermng
-spec:
- type: ClusterIP
- selector:
-   app: api-usermng
- ports:
-   - name: http
-     port: 3002
-     targetPort: 3002
-     protocol: TCP
