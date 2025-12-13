@@ -1,12 +1,13 @@
-name: CI - api-usermng
+name: CI - api-auth
+
 on:
   push:
     paths:
-      - 'backend/api-usermng/**'
-      - '.github/workflows/api-usermng-ci.yml'
+      - 'backend/api-auth/**'
+      - '.github/workflows/api-auth-ci.yml'
   pull_request:
     paths:
-      - 'backend/api-usermng/**'
+      - 'backend/api-auth/**'
   workflow_dispatch: {}
 
 permissions:
@@ -28,25 +29,24 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: backend/api-usermng/package-lock.json
 
       - name: Install dependencies
-        working-directory: backend/api-usermng
-        run: npm install
+        working-directory: backend/api-auth
+        run: npm ci
 
       - name: Run tests
-        working-directory: backend/api-usermng
+        working-directory: backend/api-auth
         run: npm test
 
       - name: Build
-        working-directory: backend/api-usermng
+        working-directory: backend/api-auth
         run: npm run build
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: api-usermng-dist-${{ matrix.node-version }}-${{ github.run_id }}
-          path: backend/api-usermng/dist
+          name: api-auth-dist-${{ matrix.node-version }}-${{ github.run_id }}
+          path: backend/api-auth/dist
 
   release_and_publish:
     name: Release & Publish Docker Image
@@ -66,8 +66,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          cache: 'npm'
-          cache-dependency-path: backend/api-usermng/package-lock.json
 
       - name: Configure git user
         run: |
@@ -75,7 +73,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Bump version (patch) and push tag
-        working-directory: backend/api-usermng
+        working-directory: backend/api-auth
         if: ${{ github.actor != 'github-actions[bot]' }}
         run: |
           # bump package.json version (npm will update package.json and create a git tag)
@@ -87,7 +85,7 @@ jobs:
           node -e "const fs=require('fs'); const v=require('./package.json').version; fs.appendFileSync(process.env.GITHUB_ENV, 'VERSION='+v+'\\n')"
 
       - name: (fallback) ensure VERSION is set if bump skipped
-        working-directory: backend/api-usermng
+        working-directory: backend/api-auth
         if: ${{ github.actor == 'github-actions[bot]' }}
         run: |
           node -e "const fs=require('fs'); const v=require('./package.json').version; fs.appendFileSync(process.env.GITHUB_ENV, 'VERSION='+v+'\\n')"
@@ -102,9 +100,9 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: ./backend/api-usermng
-          file: ./backend/api-usermng/Dockerfile
+          context: ./backend/api-auth
+          file: ./backend/api-auth/Dockerfile
           push: true
           tags: |
-            docker.io/hsassa/api-usermng:${{ env.VERSION }}
-            docker.io/hsassa/api-usermng:latest
+            docker.io/hsassa/api-auth:${{ env.VERSION }}
+            docker.io/hsassa/api-auth:latest
