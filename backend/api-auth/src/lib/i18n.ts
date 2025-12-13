@@ -1,16 +1,43 @@
 import fs from 'fs'
+import path from 'path'
 
-function loadJson(path: string): Record<string, string> {
-  const url = new URL(path, import.meta.url)
-  const content = fs.readFileSync(url, 'utf8')
-  return JSON.parse(content) as Record<string, string>
+function loadJsonFile(filename: string): Record<string, string> {
+  const candidates = [
+    // compiled output (common case when running built code / in Docker)
+    path.join(process.cwd(), 'dist', 'lib', 'locales', filename),
+    // monorepo layout where dist may be in package subdir
+    path.join(process.cwd(), 'backend', 'api-auth', 'dist', 'lib', 'locales', filename),
+    // source layout (when running with ts-jest / tsx / node directly from src)
+    path.join(process.cwd(), 'src', 'lib', 'locales', filename),
+    path.join(process.cwd(), 'backend', 'api-auth', 'src', 'lib', 'locales', filename)
+  ]
+
+  for (const p of candidates) {
+    if (fs.existsSync(p)) {
+      const content = fs.readFileSync(p, 'utf8')
+      return JSON.parse(content) as Record<string, string>
+    }
+  }
+
+  // Last-resort: try relative to this file (may work in some runtimes)
+  try {
+    const relative = path.join(__dirname, 'locales', filename)
+    if (fs.existsSync(relative)) {
+      const content = fs.readFileSync(relative, 'utf8')
+      return JSON.parse(content) as Record<string, string>
+    }
+  } catch {
+    // ignore
+  }
+
+  throw new Error(`Locale file not found: ${filename}. Tried: ${candidates.join(', ')}`)
 }
 
-const en = loadJson('./locales/en.json')
-const fr = loadJson('./locales/fr.json')
-const es = loadJson('./locales/es.json')
-const de = loadJson('./locales/de.json')
-const ar = loadJson('./locales/ar.json')
+const en = loadJsonFile('en.json')
+const fr = loadJsonFile('fr.json')
+const es = loadJsonFile('es.json')
+const de = loadJsonFile('de.json')
+const ar = loadJsonFile('ar.json')
 
 interface Translations {
   [key: string]: {
