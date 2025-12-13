@@ -20,9 +20,11 @@ metadata:
  name: api-usermng-config
  namespace: realestate
 data:
- # Non secrets / defaults for the app
- NODE_ENV: "production"
- PORT: "3002"
- BACKEND_URL: "https://api.viridial.com"
- FRONTEND_URL: "https://app.viridial.com"
- LOG_LEVEL: "info"
+  # Non secrets / defaults for the app
+  NODE_ENV: "production"
+  PORT: "3002"
+  LOG_PATH: "logs/api-usermng.log"
+  LOG_LEVEL: "info"
+  ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:3001"
+  BACKEND_URL: "https://api.viridial.com"
+  FRONTEND_URL: "https://app.viridial.com"

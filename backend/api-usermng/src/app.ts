@@ -26,6 +26,8 @@ app.use(morgan('combined'))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 
+app.get('/', (_req, res) => res.send('api-usermng service'))
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'api-usermng', timestamp: new Date().toISOString() })
