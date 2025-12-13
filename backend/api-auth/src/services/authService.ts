@@ -5,7 +5,7 @@ import { Profile } from '../models/Profile.js'
 import AppError from '../lib/AppError.js'
 import tokenService from './tokenService.js'
 import geoService from './geoService.js'
-import mailService from './mailService.js'
+import emailService from './emailService.js'
 
 export class AuthService {
   async signup(
@@ -56,7 +56,7 @@ export class AuthService {
     // send verification email (best effort)
     try {
       const vtoken = tokenService.generateEmailToken(user._id.toString(), user.email)
-      await mailService.sendVerificationEmail(user.email, vtoken, `${user.firstName || ''} ${user.lastName || ''}`.trim())
+      await emailService.sendVerificationEmail(user.email, vtoken, `${user.firstName || ''} ${user.lastName || ''}`.trim())
     } catch (err) {
       // don't block signup if email sending fails
     }
